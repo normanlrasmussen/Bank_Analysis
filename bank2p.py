@@ -35,8 +35,10 @@ class Bank2p:
             }
             
             # Get players actions
-            p1_action = self.player_1.decide_action(state)
-            p2_action = self.player_2.decide_action(state)
+            if p1:
+                p1_action = self.player_1.decide_action(state)
+            if p2:
+                p2_action = self.player_2.decide_action(state)
 
             if p1_action == "bank" and p1:
                 p1 = False
