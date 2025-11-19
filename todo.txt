@@ -1,0 +1,5 @@
+List of things to do
+1) Read the Papers
+    See if 1 player dynamic programing can solve it
+2) look at papers with 2 players
+    Look to see if you can find a NE, optimal stradegies, etc. 
