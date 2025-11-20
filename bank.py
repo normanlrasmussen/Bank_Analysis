@@ -1,3 +1,4 @@
+import copy
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -29,8 +30,8 @@ class Bank:
             state = {
                 "current_score": score,
                 "rounds_remaining": self.rounds - self.current_round,
-                "player_scores": self.player_scores,
-                "players_in": players_in,
+                "player_scores": self.player_scores.copy(),
+                "players_in": players_in.copy(),
             }
             
             # Get players actions
@@ -101,8 +102,58 @@ class Bank:
         expected_score = np.zeros(len(players))
         winner_count = np.zeros(len(players))
         for _ in range(num_simulations):
-            bank = Bank(rounds, players)
+            fresh_players = [copy.deepcopy(player) for player in players]
+            bank = Bank(rounds, fresh_players)
             bank.play_game()
             expected_score += np.array(bank.player_scores)
             winner_count += np.array(bank.player_scores) == max(bank.player_scores)
         return expected_score / num_simulations, winner_count / num_simulations
+
+    @staticmethod
+    def estimate_win_probability(players: list[Player], rounds: int, num_simulations: int = 1000):
+        win_probability = np.zeros(len(players))
+        tie_probability = np.zeros(len(players))
+        for _ in range(num_simulations):
+            fresh_players = [copy.deepcopy(player) for player in players]
+            bank = Bank(rounds, fresh_players)
+            bank.play_game()
+            scores = bank.player_scores
+            max_score = max(scores)
+            if scores.count(max_score) == 1:
+                win_probability[scores.index(max_score)] += 1
+            elif scores.count(max_score) == len(players):
+                tie_probability += 1
+        return win_probability / num_simulations, tie_probability / num_simulations
+
+    @staticmethod
+    def get_all(players: list, rounds: int, num_simulations: int = 1000):
+        """
+        Simulate games and return expected values, win percentage, and tie probability.
+        Returns:
+            expected_score: np.array of expected scores per player
+            win_percentage: np.array of probability of winning per player
+            ties_percentage: np.array of probability of each player participating in a tie
+        """
+        expected_score = np.zeros(len(players))
+        win_count = np.zeros(len(players))
+        tie_count = np.zeros(len(players))
+
+        for _ in range(num_simulations):
+            fresh_players = [copy.deepcopy(player) for player in players]
+            bank = Bank(rounds, fresh_players)
+            bank.play_game()
+            scores = bank.player_scores
+            max_score = max(scores)
+            winners = [i for i, s in enumerate(scores) if s == max_score]
+            expected_score += np.array(scores)
+            if len(winners) == 1:
+                win_count[winners[0]] += 1
+            if len(winners) > 1:
+                for winner in winners:
+                    tie_count[winner] += 1
+
+        expected_score /= num_simulations
+        win_percentage = win_count / num_simulations
+        ties_percentage = tie_count / num_simulations
+
+        return expected_score, win_percentage, ties_percentage

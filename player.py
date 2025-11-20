@@ -52,3 +52,47 @@ class ThersholdPlayer(Player):
             return "bank"
         else:
             return "roll"
+
+class GreedyPlayer(Player):
+    """
+    Player doesn't bank until everyone else has banked.
+    """
+    def __init__(self, name: str = None):
+        super().__init__(name)
+    
+    def decide_action(self, state):
+        if sum(state["players_in"]) == 1:
+            return "bank"
+        else:
+            return "roll"
+
+class GreedyPlayerK(Player):
+    """
+    Player keeps rolling until everyone else has banked, then takes up to K extra
+    rolls before banking. K applies per round, not for the entire game.
+    """
+
+    def __init__(self, name: str = None, k: int = 1):
+        super().__init__(name)
+        if k < 0:
+            raise ValueError("k must be non-negative")
+        self.k = k
+        self._extra_rolls_taken = 0
+
+    def _reset_extra_rolls(self):
+        self._extra_rolls_taken = 0
+
+    def decide_action(self, state):
+        others_still_in = sum(state["players_in"]) - int(state["players_in"][self.player_id])
+        if others_still_in > 0:
+            # Still waiting for the rest to bank.
+            self._reset_extra_rolls()
+            return "roll"
+
+        # All other players have banked.
+        if self._extra_rolls_taken < self.k:
+            self._extra_rolls_taken += 1
+            return "roll"
+
+        self._reset_extra_rolls()
+        return "bank"
