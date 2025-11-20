@@ -1,9 +1,9 @@
 from bank import Bank
 from player import ThersholdPlayer
 
-# thresholds = [50 + 50 * i for i in range(100)]
-# thresholds = [50, 100, 500]
-thresholds = [50, 844]
+# thresholds = [50 + 500 * i for i in range(100)]
+thresholds = [50 + 10 * i for i in range(1000)]
+# thresholds = [50, 844]
 players = [ThersholdPlayer(threshold=threshold) for threshold in thresholds]
 
 expected_score, winner_count = Bank.estimate_expected_score(players, 10, num_simulations=10000)
