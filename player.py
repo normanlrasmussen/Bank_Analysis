@@ -1,3 +1,5 @@
+import numpy as np
+
 class Player:
     """
     Base class for all players.
@@ -96,3 +98,17 @@ class GreedyPlayerK(Player):
 
         self._reset_extra_rolls()
         return "bank"
+
+class ProbabilisticPlayer(Player):
+    """
+    Player that banks with a certain probability.
+    """
+    def __init__(self, name: str = None, probability: float = 0.5):
+        super().__init__(name)
+        self.probability = probability
+    
+    def decide_action(self, state):
+        if np.random.random() < self.probability:
+            return "bank"
+        else:
+            return "roll"

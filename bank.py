@@ -1,4 +1,5 @@
 import copy
+import stat
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -98,6 +99,16 @@ class Bank:
             plt.show()
 
     @staticmethod
+    def get_expected_value(players: list[Player], rounds: int, num_simulations: int = 1000):
+        expected_value = np.zeros(len(players))
+        for _ in range(num_simulations):
+            fresh_players = [copy.deepcopy(player) for player in players]
+            bank = Bank(rounds, fresh_players)
+            bank.play_game()
+            expected_value += np.array(bank.player_scores)
+        return expected_value / num_simulations
+
+    @staticmethod # TODO: Depreciate this method
     def estimate_expected_score(players: list[Player], rounds: int, num_simulations: int = 1000):
         expected_score = np.zeros(len(players))
         winner_count = np.zeros(len(players))
