@@ -99,6 +99,32 @@ class GreedyPlayerK(Player):
         self._reset_extra_rolls()
         return "bank"
 
+
+class SesquaGreedyPlayer(Player):
+    """
+    Acts like a greedy player until all opponents bank. Once alone, bank only if
+    doing so maintains or takes the lead; otherwise keep rolling.
+    """
+
+    def __init__(self, name: str = None):
+        super().__init__(name)
+
+    def decide_action(self, state):
+        others_still_in = sum(state["players_in"]) - int(state["players_in"][self.player_id])
+        if others_still_in > 0:
+            return "roll"
+
+        current_score = state["player_scores"][self.player_id]
+        max_other = max(
+            score for idx, score in enumerate(state["player_scores"]) if idx != self.player_id
+        ) if len(state["player_scores"]) > 1 else -np.inf
+        prospective = current_score + state["current_score"]
+
+        if current_score > max_other or prospective > max_other:
+            return "bank"
+        return "roll"
+        
+
 class ProbabilisticPlayer(Player):
     """
     Player that banks with a certain probability.
