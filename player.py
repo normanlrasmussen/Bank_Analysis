@@ -138,3 +138,32 @@ class ProbabilisticPlayer(Player):
             return "bank"
         else:
             return "roll"
+
+class AntiGreedyPlayer(Player):
+    """
+    Made for 2p games
+    Will bank when they will have more points than the other player if they bank now.
+    """
+    def __init__(self, name: str = None):
+        super().__init__(name)
+    
+    def decide_action(self, state):
+        # Raise Error if not 2p game
+        if len(state["players_in"]) != 2:
+            raise ValueError("AntiGreedyPlayer is only for 2p games")
+
+        if state["player_scores"][self.player_id] + state["current_score"] > state["player_scores"][1 - self.player_id]:
+            return "bank"
+        else:
+            return "roll"
+
+class TrollPlayer(Player):
+    """
+    This player never banks, they just roll until they get a 7.
+    Meant to upset the GreedyPlayer.
+    """
+    def __init__(self, name: str = None):
+        super().__init__(name)
+    
+    def decide_action(self, state):
+        return "roll"

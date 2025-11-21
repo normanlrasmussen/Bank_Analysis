@@ -1,5 +1,13 @@
-List of things to do
-1) Read the Papers
-    See if 1 player dynamic programing can solve it
-2) look at papers with 2 players
-    Look to see if you can find a NE, optimal stradegies, etc. 
+RL Things to Try:
+
+-With single player
+    Teach ProbabilisticPlayer to maximize over 1 round, 10 rounds, 100 rounds
+    Teach ThersholdPlayer to maximize over 1 round, 10 rounds, 100 rounds
+    Teach EmptyPlayer to maximize over 1 round, 10 rounds, 100 rounds
+
+-Multiplayer
+    Try various player combinations
+    Put in Troll to discourage Greedy Strategies
+
+-Libraries
+    PettingZoo environment + Stable-Baselines3 PPO/DQN training with self-play
