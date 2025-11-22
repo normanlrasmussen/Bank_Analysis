@@ -1,5 +1,5 @@
 from bank import Bank
-from player import ThersholdPlayer
+from players import ThersholdPlayer
 
 # thresholds = [50 + 500 * i for i in range(100)]
 thresholds = [50 + 10 * i for i in range(1000)]

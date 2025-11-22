@@ -1,5 +1,5 @@
 import numpy as np
-from player import Player
+from ..players import Player
 
 class Bank2p:
     def __init__(self, rounds: int, player_1_strategy: Player, player_2_strategy: Player, verbose: bool = False):

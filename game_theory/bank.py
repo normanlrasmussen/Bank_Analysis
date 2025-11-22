@@ -3,7 +3,7 @@ import stat
 import numpy as np
 import matplotlib.pyplot as plt
 
-from player import Player
+from players import Player
 
 class Bank:
     def __init__(self, rounds: int, players: list[Player], verbose: bool = False):

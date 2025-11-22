@@ -1,5 +1,5 @@
-from bank2p import Bank2p
-from player import ThersholdPlayer, HumanPlayer
+from .bank2p import Bank2p
+from ..players import ThersholdPlayer, HumanPlayer
 
 p1 = ThersholdPlayer(threshold=100)
 p2 = HumanPlayer()

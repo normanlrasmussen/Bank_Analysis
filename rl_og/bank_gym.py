@@ -4,8 +4,8 @@ import gymnasium as gym
 from gymnasium import spaces
 from typing import Optional, Tuple, Dict, Any
 
-from bank import Bank
-from player import Player
+from game_theory.bank import Bank
+from players import Player
 
 
 class BankEnv(gym.Env):
@@ -135,7 +135,7 @@ class BankEnv(gym.Env):
         super().reset(seed=seed)
         
         # Create a dummy RL player that we'll control via actions
-        from player import Player as BasePlayer
+        from players import Player as BasePlayer
         class RLPlayer(BasePlayer):
             def __init__(self, env):
                 super().__init__()

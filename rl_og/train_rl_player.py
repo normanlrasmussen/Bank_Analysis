@@ -21,7 +21,7 @@ except ImportError:
     raise ImportError("stable-baselines3 not available. Please install it with: pip install stable-baselines3")
 
 from bank_gym import BankEnv
-from player import ThersholdPlayer, GreedyPlayer, GreedyPlayerK, SesquaGreedyPlayer
+from players import ThersholdPlayer, GreedyPlayer, GreedyPlayerK, SesquaGreedyPlayer
 
 
 # ============================================================================

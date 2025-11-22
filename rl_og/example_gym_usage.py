@@ -5,7 +5,7 @@ This demonstrates how to use the Gymnasium environment with the existing
 player classes from player.py.
 """
 from bank_gym import BankEnv
-from player import ThersholdPlayer, GreedyPlayer, GreedyPlayerK, SesquaGreedyPlayer
+from players import ThersholdPlayer, GreedyPlayer, GreedyPlayerK, SesquaGreedyPlayer
 
 
 def example_basic_usage():
