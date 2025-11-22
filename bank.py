@@ -35,13 +35,20 @@ class Bank:
                 "players_in": players_in.copy(),
             }
             
-            # Get players actions
+            # Collect all player decisions simultaneously (no look-ahead bias)
+            # All players see the same state before any decisions are made
+            decisions = {}
             for i, player in enumerate(self.players):
                 if players_in[i]:
-                    action = player.decide_action(state)
-                    if action == "bank":
-                        players_in[i] = False
-                        self.player_scores[i] += score
+                    decisions[i] = player.decide_action(state)
+                else:
+                    decisions[i] = None  # Player already banked
+            
+            # Apply all decisions simultaneously
+            for i, action in decisions.items():
+                if action == "bank" and players_in[i]:
+                    players_in[i] = False
+                    self.player_scores[i] += score
 
             if all(not player_in for player_in in players_in):
                 break

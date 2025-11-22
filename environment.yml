@@ -1,0 +1,19 @@
+name: bank
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.13
+  - pip
+  - pip:
+    - numpy==2.3.5
+    - matplotlib==3.10.7
+    - gymnasium==1.2.2
+    - pillow==12.0.0
+    - jupyter==1.1.1
+    - ipykernel==7.1.0
+    - stable-baselines3==2.7.0
+    - tensorboard==2.20.0
+    - torch==2.9.1
+    - pandas==2.3.3
+prefix: /home/normski/.conda/envs/bank
