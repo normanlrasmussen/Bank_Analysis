@@ -55,6 +55,9 @@ coverage.xml
 .pytest_cache/
 cover/
 
+# Machine Learning / TensorBoard
+tb_logs/
+
 # Translations
 *.mo
 *.pot
