@@ -5,6 +5,23 @@ This script allows you to train an RL agent to play the Bank push-your-luck dice
 All parameters are configurable at the top, and statistics are visualized at the end.
 """
 
+import sys
+from pathlib import Path
+
+# Add parent directory to path to import game_theory module
+# This ensures game_theory can be found regardless of where the script is run from
+script_dir = Path(__file__).resolve().parent
+project_root = script_dir.parent
+
+# Add project root to path (for game_theory module)
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
+# Also add parent directory as fallback
+parent_dir = str(project_root.parent)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import List, Tuple
@@ -20,8 +37,20 @@ try:
 except ImportError:
     raise ImportError("stable-baselines3 not available. Please install it with: pip install stable-baselines3")
 
-from bank_gym import BankEnv
-from players import ThersholdPlayer, GreedyPlayer, GreedyPlayerK, SesquaGreedyPlayer
+# Import local modules with fallback for path issues
+try:
+    from bank_gym import BankEnv
+    from players import ThersholdPlayer, GreedyPlayer, GreedyPlayerK, SesquaGreedyPlayer, ProbabilisticPlayer
+except ModuleNotFoundError as e:
+    if 'game_theory' in str(e):
+        # Ensure project_root is definitely in the path and retry
+        project_root_str = str(project_root)
+        if project_root_str not in sys.path:
+            sys.path.insert(0, project_root_str)
+        from bank_gym import BankEnv
+        from players import ThersholdPlayer, GreedyPlayer, GreedyPlayerK, SesquaGreedyPlayer, ProbabilisticPlayer
+    else:
+        raise
 
 
 # ============================================================================
@@ -32,6 +61,9 @@ from players import ThersholdPlayer, GreedyPlayer, GreedyPlayerK, SesquaGreedyPl
 ENV_ROUNDS = 10  # Number of rounds per game
 ENV_OPPONENTS = [
     ThersholdPlayer(threshold=100),
+    ThersholdPlayer(threshold=200),
+    ThersholdPlayer(threshold=2000),
+    ProbabilisticPlayer(probability=0.2),
 ]  # List of opponents for the RL agent
 ENV_MAX_ROUND_LENGTH = 100  # Maximum steps per round
 
@@ -107,7 +139,7 @@ ALGORITHM_CONFIG = ALGORITHM_CONFIGS.get(TRAIN_ALGORITHM, ALGORITHM_CONFIGS["PPO
 # TRAINING PARAMETERS (General)
 # ============================================================================
 
-TRAIN_TOTAL_TIMESTEPS = 100000  # Total number of training steps
+TRAIN_TOTAL_TIMESTEPS = 500000  # Total number of training steps
 TRAIN_VERBOSE = 1  # Verbosity level (0, 1, or 2)
 TRAIN_LOG_INTERVAL = 10  # Log progress every N episodes
 
@@ -121,13 +153,13 @@ PROGRESS_EVAL_EPISODES = 20  # Episodes to run for progress tracking
 
 # Model Saving
 SAVE_MODEL = True  # Whether to save the trained model
-MODEL_SAVE_PATH = "RL_data/rl_bank_model_test.zip"  # Path to save model
+MODEL_SAVE_PATH = "RL_data/rl_bank_model_ppo_multi.zip"  # Path to save model
 
 # Visualization Parameters
 PLOT_FIGURE_SIZE = (14, 10)  # Figure size for the plot
 PLOT_DPI = 100  # DPI for saving plots
 SAVE_PLOT = True  # Whether to save the plot
-PLOT_SAVE_PATH = "RL_data/rl_training_stats_test.png"  # Path to save plot
+PLOT_SAVE_PATH = "RL_data/rl_training_stats_ppo_multi.png"  # Path to save plot
 
 
 # ============================================================================
