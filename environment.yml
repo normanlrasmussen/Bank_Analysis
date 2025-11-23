@@ -5,6 +5,8 @@ channels:
 dependencies:
   - python=3.13
   - pip
+  - tqdm
+  - rich
   - pip:
     - numpy==2.3.5
     - matplotlib==3.10.7
@@ -16,4 +18,4 @@ dependencies:
     - tensorboard==2.20.0
     - torch==2.9.1
     - pandas==2.3.3
-prefix: /home/normski/.conda/envs/bank
+    - pettingzoo
