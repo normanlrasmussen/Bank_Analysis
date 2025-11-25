@@ -6,7 +6,7 @@ import tqdm
 from mpl_toolkits.mplot3d import Axes3D
 
 
-n = 30
+n = 60
 
 X = np.linspace(0, 1, n)
 Z = np.zeros((n, n))
@@ -82,3 +82,5 @@ else:
     print("This game may only have mixed strategy equilibria.")
 
 print("="*60)
+
+np.save('prob_mesh.npy', Z)

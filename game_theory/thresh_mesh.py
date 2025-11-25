@@ -23,7 +23,7 @@ for i in range(X.shape[0]):
         win_pct, _ = Bank.estimate_win_probability(
             [ThresholdPlayer(threshold=X[i]), ThresholdPlayer(threshold=X[j])], 
             rounds=10, 
-            num_simulations=100
+            num_simulations=1000
             )
         Z[i, j] = win_pct[0] - win_pct[1]
         # Update progress bar with current values
@@ -82,3 +82,5 @@ else:
     print("This game may only have mixed strategy equilibria.")
 
 print("="*60)
+
+np.save('thresh_mesh.npy', Z)
