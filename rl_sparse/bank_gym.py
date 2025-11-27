@@ -1,3 +1,5 @@
+# This file will have sparse rewards, so the agent will only be rewarded for winning the game, and not for each step.
+
 import numpy as np
 import copy
 import gymnasium as gym
@@ -125,7 +127,7 @@ class BankEnv(gym.Env):
         
         if self.current_round > self.rounds:
             final_scores = player_scores.copy()
-            reward += self._calculate_final_reward()
+            reward += self._calculate_final_reward(player_scores)
             self.current_state = None
             terminated = True
             observation = np.zeros(self.observation_space.shape, dtype=np.float32)
@@ -284,9 +286,16 @@ class BankEnv(gym.Env):
         """Calculate reward for the current step."""
         return 0.0
     
-    def _calculate_final_reward(self) -> float:
+    def _calculate_final_reward(self, player_scores: np.ndarray) -> float:
         """Calculate final reward at the end of the game."""
-        return 0.0
+        if len(player_scores) == 1:
+            return 0.0
+        if player_scores[0] > max(player_scores[1:]):
+            return 1.0
+        elif player_scores[0] == max(player_scores[1:]):
+            return 0.0
+        else:
+            return -1.0
     
     def render(self):
         """Render the environment."""
