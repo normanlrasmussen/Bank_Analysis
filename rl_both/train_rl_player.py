@@ -40,7 +40,7 @@ except ModuleNotFoundError as e:
 
 ENV_ROUNDS = 10
 ENV_OPPONENTS = [
-    ThersholdPlayer(threshold=200),
+    ThersholdPlayer(threshold=100),
 ]
 ENV_MAX_ROUND_LENGTH = 100
 
@@ -57,7 +57,7 @@ PPO_CONFIG = {
     "max_grad_norm": 0.5,
 }
 
-TRAIN_TOTAL_TIMESTEPS = 200000
+TRAIN_TOTAL_TIMESTEPS = 500000
 TRAIN_VERBOSE = 1
 TRAIN_LOG_INTERVAL = 10
 
@@ -68,12 +68,12 @@ TRACK_PROGRESS_INTERVAL = 1000
 PROGRESS_EVAL_EPISODES = 20
 
 SAVE_MODEL = True
-MODEL_SAVE_PATH = str(script_dir / "RL_data" / "rl_bank_model_ppo_200.zip")
+MODEL_SAVE_PATH = str(script_dir / "RL_data" / "rl_bank_model_ppo_multi.zip")
 
 PLOT_FIGURE_SIZE = (14, 10)
 PLOT_DPI = 100
 SAVE_PLOT = True
-PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_ppo_200.png")
+PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_ppo_multi.png")
 
 
 def evaluate_agent(env: BankEnv, model, n_episodes: int = 100) -> Tuple[float, float, List[int], List[float]]:
@@ -106,21 +106,11 @@ def evaluate_agent(env: BankEnv, model, n_episodes: int = 100) -> Tuple[float, f
             elif "player_scores" in info:
                 final_scores = info["player_scores"]
             else:
-                # Fallback: try to get from environment if available
-                if hasattr(env, '_final_scores') and env._final_scores is not None:
-                    final_scores = env._final_scores.tolist() if hasattr(env._final_scores, 'tolist') else list(env._final_scores)
-                elif hasattr(env, '_player_scores') and env._player_scores is not None:
-                    final_scores = env._player_scores.tolist() if hasattr(env._player_scores, 'tolist') else list(env._player_scores)
-                else:
-                    final_scores = [0.0] * (1 + env.n_opponents if hasattr(env, 'n_opponents') else 2)
+                final_scores = [0, 0]
             
-            # Ensure we have at least one score (the agent)
-            if len(final_scores) == 0:
-                final_scores = [0.0]
-            
-            agent_score = float(final_scores[0])
-            opponent_scores = [float(s) for s in final_scores[1:]] if len(final_scores) > 1 else []
-            max_opponent_score = max(opponent_scores) if opponent_scores else 0.0
+            agent_score = final_scores[0]
+            opponent_scores = final_scores[1:] if len(final_scores) > 1 else [0]
+            max_opponent_score = max(opponent_scores) if opponent_scores else 0
             total_score += agent_score
             episode_scores.append(agent_score)
             
