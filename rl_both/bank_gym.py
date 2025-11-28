@@ -35,6 +35,7 @@ class BankEnv(gym.Env):
         max_round_length: int = 100,
         verbose: bool = False,
         render_mode: Optional[str] = None,
+        reward_mode: str = "round",  # "round" or "sparse"
     ):
         """
         Initialize the Bank Gymnasium environment.
@@ -45,6 +46,8 @@ class BankEnv(gym.Env):
             max_round_length: Maximum steps per round to prevent infinite loops
             verbose: Whether to print game information
             render_mode: Rendering mode ("human" or "rgb_array")
+            reward_mode: Reward calculation mode - "round" for incremental round-based rewards,
+                        "sparse" for end-of-game only rewards
         """
         super().__init__()
         
@@ -52,6 +55,7 @@ class BankEnv(gym.Env):
         self.max_round_length = max_round_length
         self.verbose = verbose
         self.render_mode = render_mode
+        self.reward_mode = reward_mode
         
         # Set up opponents (empty list if None)
         if opponents is None:
@@ -80,6 +84,7 @@ class BankEnv(gym.Env):
         self._player_scores = np.zeros(self.n_players, dtype=np.float32)
         self._players_in = np.ones(self.n_players, dtype=bool)
         self._obs_buffer = np.zeros(self.observation_space.shape, dtype=np.float32)
+        self._prev_score_diff = 0.0  # Track previous score difference for round-based rewards
         
     def _get_observation(self) -> np.ndarray:
         """
@@ -117,6 +122,16 @@ class BankEnv(gym.Env):
         """Handle round ending and transition to next round or game end."""
         terminated = False
         truncated = False
+        
+        # Update current_state before computing reward (needed for round-based rewards)
+        if self.reward_mode == "round":
+            self.current_state = {
+                "current_score": 0,
+                "rounds_remaining": self.rounds - self.current_round,
+                "player_scores": player_scores,
+                "players_in": self._players_in,
+            }
+        
         reward = self._calculate_reward()
         
         self.current_round += 1
@@ -125,7 +140,7 @@ class BankEnv(gym.Env):
         
         if self.current_round > self.rounds:
             final_scores = player_scores.copy()
-            reward += self._calculate_final_reward()
+            reward += self._calculate_final_reward(player_scores)
             self.current_state = None
             terminated = True
             observation = np.zeros(self.observation_space.shape, dtype=np.float32)
@@ -185,6 +200,7 @@ class BankEnv(gym.Env):
             player.set_player_id(i)
         
         self._player_scores.fill(0.0)
+        self._prev_score_diff = 0.0  # Reset previous score difference for round-based rewards
         
         self.current_round = 1
         self.round_step = 0
@@ -281,12 +297,64 @@ class BankEnv(gym.Env):
         return observation, 0.0, False, truncated, info
     
     def _calculate_reward(self) -> float:
-        """Calculate reward for the current step."""
-        return 0.0
+        """
+        Calculate reward based on the selected reward mode.
+        
+        - "round": Incremental reward based on score difference at end of each round
+        - "sparse": Returns 0.0 (rewards only at game end)
+        """
+        if self.reward_mode == "round":
+            return self._calculate_round_reward()
+        else:  # sparse mode
+            return 0.0
     
-    def _calculate_final_reward(self) -> float:
-        """Calculate final reward at the end of the game."""
-        return 0.0
+    def _calculate_round_reward(self) -> float:
+        """
+        Reward given only at the *end of a round* (round-based mode).
+        Reward = (agent_total_score - max_opponent_total_score) - previous_score_diff.
+        This gives the incremental change in score difference for this round.
+        Rewards are normalized to be on a similar scale to sparse rewards for consistency.
+        """
+        if self.current_state is None:
+            return 0.0
+
+        scores = self.current_state["player_scores"]
+        agent_score = scores[0]
+        if len(scores) > 1:
+            max_opp = np.max(scores[1:])
+        else:
+            max_opp = 0.0
+
+        # Normalize score difference to keep rewards in a reasonable range
+        # Using a fixed scale factor (1000.0) to ensure rewards are meaningful
+        # This keeps incremental rewards per round in a similar magnitude to sparse rewards
+        score_scale = 1000.0
+        current_score_diff = float(agent_score - max_opp) / score_scale
+        reward = current_score_diff - self._prev_score_diff
+        self._prev_score_diff = current_score_diff
+        return reward
+    
+    def _calculate_final_reward(self, player_scores: np.ndarray) -> float:
+        """
+        Calculate final reward at the end of the game.
+        
+        - "round": Returns 0.0 (main reward comes from per-round rewards)
+        - "sparse": Returns 1.0 for win, 0.0 for tie, -1.0 for loss
+        """
+        if self.reward_mode == "sparse":
+            if len(player_scores) == 1:
+                return 0.0
+            if player_scores[0] > max(player_scores[1:]):
+                return 1.0
+            elif player_scores[0] == max(player_scores[1:]):
+                return 0.0
+            else:
+                return -1.0
+        else:  # round mode
+            # The per-round rewards should already reflect performance
+            # This is just a small bonus/penalty for final outcome
+            # The main reward comes from _calculate_round_reward above
+            return 0.0
     
     def render(self):
         """Render the environment."""

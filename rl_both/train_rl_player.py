@@ -68,12 +68,12 @@ TRACK_PROGRESS_INTERVAL = 1000
 PROGRESS_EVAL_EPISODES = 20
 
 SAVE_MODEL = True
-MODEL_SAVE_PATH = str(script_dir / "RL_data" / "rl_bank_model_ppo_multi.zip")
+MODEL_SAVE_PATH = str(script_dir / "RL_data" / "rl_bank_model_ppo_100.zip")
 
 PLOT_FIGURE_SIZE = (14, 10)
 PLOT_DPI = 100
 SAVE_PLOT = True
-PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_ppo_multi.png")
+PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_ppo_100.png")
 
 
 def evaluate_agent(env: BankEnv, model, n_episodes: int = 100) -> Tuple[float, float, List[int], List[float]]:
