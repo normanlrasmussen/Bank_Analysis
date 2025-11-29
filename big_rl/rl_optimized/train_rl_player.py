@@ -15,12 +15,13 @@ if parent_dir not in sys.path:
 
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Optional
 import gymnasium as gym
 
 try:
     from stable_baselines3 import PPO
     from stable_baselines3.common.monitor import Monitor
+    from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
     SB3_AVAILABLE = True
 except ImportError:
     raise ImportError("stable-baselines3 not available. Please install it with: pip install stable-baselines3")
@@ -41,18 +42,22 @@ except ModuleNotFoundError as e:
 ENV_ROUNDS = 10
 ENV_OPPONENTS = [
     ThersholdPlayer(threshold=100),
+    ThersholdPlayer(threshold=180),
+    GreedyPlayer(),
+    SesquaGreedyPlayer(),
+    ProbabilisticPlayer(probability=0.2),
 ]
 ENV_MAX_ROUND_LENGTH = 1000
 
 PPO_CONFIG = {
-    "learning_rate": 1e-4,
-    "n_steps": 2048,
-    "batch_size": 128,
-    "n_epochs": 10,
-    "gamma": 0.99,
+    "learning_rate": 3e-4,   # faster learning
+    "n_steps": 1024,         # slightly shorter rollouts
+    "batch_size": 256,       # bigger batch, less noisy
+    "n_epochs": 10,          # OK
+    "gamma": 0.995,          # longer horizon since reward is delayed
     "gae_lambda": 0.95,
     "clip_range": 0.2,
-    "ent_coef": 0.01,
+    "ent_coef": 0.02,        # encourage exploration more
     "vf_coef": 0.5,
     "max_grad_norm": 0.5,
 }
@@ -62,8 +67,6 @@ TRAIN_VERBOSE = 1
 TRAIN_LOG_INTERVAL = 10
 
 EVAL_N_EPISODES = 1000
-EVAL_N_MATCHES_FOR_PROJECTION = [10, 50, 100, 500, 1000]
-
 TRACK_PROGRESS_INTERVAL = 1000
 PROGRESS_EVAL_EPISODES = 20
 
@@ -76,7 +79,7 @@ SAVE_PLOT = True
 PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_ppo_multi.png")
 
 
-def evaluate_agent(env: BankEnv, model, n_episodes: int = 100) -> Tuple[float, float, List[int], List[float]]:
+def evaluate_agent(env, model, n_episodes: int = 100) -> Tuple[float, float, List[int], List[float]]:
     """Evaluate the agent and return statistics."""
     wins = 0
     ties = 0
@@ -85,26 +88,54 @@ def evaluate_agent(env: BankEnv, model, n_episodes: int = 100) -> Tuple[float, f
     episode_results = []
     episode_scores = []
     
+    # Check if env is a VecEnv (has step method that returns 4 values)
+    is_vec_env = hasattr(env, 'step') and not isinstance(env, BankEnv)
+    
     for episode in range(n_episodes):
-        obs, info = env.reset()
+        if is_vec_env:
+            obs = env.reset()
+            # VecEnv returns batched obs, get first element
+            if isinstance(obs, np.ndarray) and len(obs.shape) > 1:
+                obs = obs[0]
+        else:
+            obs, info = env.reset()
+            if isinstance(info, dict):
+                info = [info]
+        
         terminated = False
         truncated = False
+        info = [{}] if is_vec_env else (info if isinstance(info, list) else [info])
         
         while not (terminated or truncated):
             if SB3_AVAILABLE and model is not None:
                 action, _ = model.predict(obs, deterministic=True)
             else:
-                current_score = info.get("current_score", 0)
+                current_info = info[0] if isinstance(info, list) else info
+                current_score = current_info.get("current_score", 0)
                 action = 1 if current_score > 50 else 0
             
-            obs, reward, terminated, truncated, info = env.step(action)
+            if is_vec_env:
+                # VecEnv expects batched actions
+                action_batch = np.array([action])
+                obs, rewards, dones, infos = env.step(action_batch)
+                terminated = bool(dones[0])
+                truncated = False  # VecEnv doesn't distinguish terminated/truncated
+                # VecEnv returns batched obs, get first element
+                if isinstance(obs, np.ndarray) and len(obs.shape) > 1:
+                    obs = obs[0]
+                info = infos if isinstance(infos, list) else [infos]
+            else:
+                obs, reward, terminated, truncated, info = env.step(action)
+                if isinstance(info, dict):
+                    info = [info]
         
         # Get final scores
         if terminated or truncated:
-            if "final_scores" in info:
-                final_scores = info["final_scores"]
-            elif "player_scores" in info:
-                final_scores = info["player_scores"]
+            current_info = info[0] if isinstance(info, list) else info
+            if "final_scores" in current_info:
+                final_scores = current_info["final_scores"]
+            elif "player_scores" in current_info:
+                final_scores = current_info["player_scores"]
             else:
                 final_scores = [0, 0]
             
@@ -130,14 +161,6 @@ def evaluate_agent(env: BankEnv, model, n_episodes: int = 100) -> Tuple[float, f
     return win_rate, avg_score, episode_results, episode_scores
 
 
-def calculate_expected_wins(win_rate: float, n_matches: int) -> Tuple[float, float, float]:
-    """Calculate expected wins with 95% confidence intervals."""
-    expected_wins = win_rate * n_matches
-    std = np.sqrt(win_rate * (1 - win_rate) * n_matches)
-    lower_bound = max(0, expected_wins - 1.96 * std)
-    upper_bound = min(n_matches, expected_wins + 1.96 * std)
-    
-    return expected_wins, lower_bound, upper_bound
 
 
 class ProgressCallback:
@@ -171,15 +194,25 @@ def train_agent():
     print(f"Training timesteps: {TRAIN_TOTAL_TIMESTEPS}")
     print()
     
-    env = BankEnv(
-        rounds=ENV_ROUNDS,
-        opponents=ENV_OPPONENTS,
-        max_round_length=ENV_MAX_ROUND_LENGTH,
-        verbose=False,
-    )
-    
     if SB3_AVAILABLE:
-        env = Monitor(env, filename=None, allow_early_resets=True)
+        def make_env():
+            return BankEnv(
+                rounds=ENV_ROUNDS,
+                opponents=ENV_OPPONENTS,
+                max_round_length=ENV_MAX_ROUND_LENGTH,
+                verbose=False,
+            )
+        
+        vec_env = DummyVecEnv([make_env])
+        vec_env = VecNormalize(vec_env, norm_obs=True, norm_reward=True, clip_obs=5.0)
+        env = vec_env
+    else:
+        env = BankEnv(
+            rounds=ENV_ROUNDS,
+            opponents=ENV_OPPONENTS,
+            max_round_length=ENV_MAX_ROUND_LENGTH,
+            verbose=False,
+        )
     
     model = None
     training_win_rates = []
@@ -188,31 +221,9 @@ def train_agent():
     
     if SB3_AVAILABLE:
         print("Training with stable-baselines3 using PPO...")
-        from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
-        import torch as th
-        import torch.nn as nn
-        
-        class CustomMLP(BaseFeaturesExtractor):
-            """Custom MLP for the bank game."""
-            def __init__(self, observation_space: gym.spaces.Space, features_dim: int = 128):
-                super().__init__(observation_space, features_dim)
-                n_input = observation_space.shape[0]
-                self.net = nn.Sequential(
-                    nn.Linear(n_input, 256),
-                    nn.ReLU(),
-                    nn.Linear(256, 256),
-                    nn.ReLU(),
-                    nn.Linear(256, features_dim),
-                    nn.ReLU(),
-                )
-            
-            def forward(self, observations: th.Tensor) -> th.Tensor:
-                return self.net(observations)
         
         policy_kwargs = dict(
-            features_extractor_class=CustomMLP,
-            features_extractor_kwargs=dict(features_dim=128),
-            net_arch=[256, 256],
+            net_arch=[128, 128],  # let PPO build a simple MLP
         )
         
         # Ensure tensorboard log directory exists
@@ -222,17 +233,8 @@ def train_agent():
         model = PPO(
             "MlpPolicy",
             env,
-            learning_rate=PPO_CONFIG["learning_rate"],
-            n_steps=PPO_CONFIG["n_steps"],
-            batch_size=PPO_CONFIG["batch_size"],
-            n_epochs=PPO_CONFIG["n_epochs"],
-            gamma=PPO_CONFIG["gamma"],
-            gae_lambda=PPO_CONFIG["gae_lambda"],
-            clip_range=PPO_CONFIG["clip_range"],
-            ent_coef=PPO_CONFIG["ent_coef"],
-            vf_coef=PPO_CONFIG["vf_coef"],
-            max_grad_norm=PPO_CONFIG["max_grad_norm"],
             policy_kwargs=policy_kwargs,
+            **PPO_CONFIG,
             verbose=TRAIN_VERBOSE,
             tensorboard_log=str(tb_log_dir),
         )
@@ -263,12 +265,20 @@ def train_agent():
                         print(f"Warning: Could not evaluate progress at {self.num_timesteps}: {e}")
                 return True
         
-        eval_env = BankEnv(
-            rounds=ENV_ROUNDS,
-            opponents=ENV_OPPONENTS,
-            max_round_length=ENV_MAX_ROUND_LENGTH,
-            verbose=False,
-        )
+        def make_eval_env():
+            return BankEnv(
+                rounds=ENV_ROUNDS,
+                opponents=ENV_OPPONENTS,
+                max_round_length=ENV_MAX_ROUND_LENGTH,
+                verbose=False,
+            )
+        
+        eval_vec_env = DummyVecEnv([make_eval_env])
+        eval_vec_env = VecNormalize(eval_vec_env, norm_obs=True, norm_reward=True, clip_obs=5.0)
+        # Sync normalization stats from training env
+        eval_vec_env.obs_rms = vec_env.obs_rms
+        eval_vec_env.ret_rms = vec_env.ret_rms
+        eval_env = eval_vec_env
         callback = ProgressTrackingCallback(progress_callback, eval_env)
         
         model.learn(
@@ -309,12 +319,30 @@ def evaluate_trained_agent(model):
     if model is None and not SB3_AVAILABLE:
         print("Warning: No trained model available. Using simple threshold policy for evaluation.")
     
-    eval_env = BankEnv(
-        rounds=ENV_ROUNDS,
-        opponents=ENV_OPPONENTS,
-        max_round_length=ENV_MAX_ROUND_LENGTH,
-        verbose=False,
-    )
+    if SB3_AVAILABLE:
+        def make_eval_env():
+            return BankEnv(
+                rounds=ENV_ROUNDS,
+                opponents=ENV_OPPONENTS,
+                max_round_length=ENV_MAX_ROUND_LENGTH,
+                verbose=False,
+            )
+        
+        eval_vec_env = DummyVecEnv([make_eval_env])
+        eval_vec_env = VecNormalize(eval_vec_env, norm_obs=True, norm_reward=True, clip_obs=5.0)
+        # If model exists and has normalization stats, sync them
+        if model is not None and hasattr(model, 'get_vec_normalize_env') and model.get_vec_normalize_env() is not None:
+            train_vec_env = model.get_vec_normalize_env()
+            eval_vec_env.obs_rms = train_vec_env.obs_rms
+            eval_vec_env.ret_rms = train_vec_env.ret_rms
+        eval_env = eval_vec_env
+    else:
+        eval_env = BankEnv(
+            rounds=ENV_ROUNDS,
+            opponents=ENV_OPPONENTS,
+            max_round_length=ENV_MAX_ROUND_LENGTH,
+            verbose=False,
+        )
     
     win_rate, avg_score, episode_results, episode_scores = evaluate_agent(
         eval_env, model, EVAL_N_EPISODES
@@ -332,20 +360,103 @@ def evaluate_trained_agent(model):
     return win_rate, avg_score, episode_results, episode_scores
 
 
-def create_comprehensive_plot(
+def evaluate_against_opponents(model, n_episodes: int = 1000) -> Tuple[Dict[str, float], Dict[str, float]]:
+    """Evaluate the trained agent against multiple opponent types in 1v1 matches.
+    
+    Returns:
+        Tuple of (win_rates, tie_rates) dictionaries
+    """
+    print("\n" + "=" * 80)
+    print("Evaluating Against Multiple Opponents (1v1)")
+    print("=" * 80)
+    
+    opponents = [
+        ("Threshold 100", ThersholdPlayer(threshold=100)),
+        ("Threshold 200", ThersholdPlayer(threshold=200)),
+        ("Greedy", GreedyPlayer()),
+        ("SesquaGreedy", SesquaGreedyPlayer()),
+        ("Probabilistic 0.2", ProbabilisticPlayer(probability=0.2)),
+    ]
+    
+    win_rates = {}
+    tie_rates = {}
+    
+    for opponent_name, opponent in opponents:
+        print(f"\nEvaluating against {opponent_name}...")
+        
+        if SB3_AVAILABLE:
+            def make_eval_env():
+                return BankEnv(
+                    rounds=ENV_ROUNDS,
+                    opponents=[opponent],
+                    max_round_length=ENV_MAX_ROUND_LENGTH,
+                    verbose=False,
+                )
+            
+            eval_vec_env = DummyVecEnv([make_eval_env])
+            eval_vec_env = VecNormalize(eval_vec_env, norm_obs=True, norm_reward=True, clip_obs=5.0)
+            # If model exists and has normalization stats, sync them
+            if model is not None and hasattr(model, 'get_vec_normalize_env') and model.get_vec_normalize_env() is not None:
+                train_vec_env = model.get_vec_normalize_env()
+                eval_vec_env.obs_rms = train_vec_env.obs_rms
+                eval_vec_env.ret_rms = train_vec_env.ret_rms
+            eval_env = eval_vec_env
+        else:
+            eval_env = BankEnv(
+                rounds=ENV_ROUNDS,
+                opponents=[opponent],
+                max_round_length=ENV_MAX_ROUND_LENGTH,
+                verbose=False,
+            )
+        
+        win_rate, avg_score, episode_results, episode_scores = evaluate_agent(
+            eval_env, model, n_episodes
+        )
+        
+        # Calculate tie rate
+        ties = sum(1 for r in episode_results if r == 0)
+        tie_rate = ties / n_episodes
+        
+        win_rates[opponent_name] = win_rate
+        tie_rates[opponent_name] = tie_rate
+        print(f"  Win rate: {win_rate:.3f} ({win_rate*100:.1f}%)")
+        print(f"  Tie rate: {tie_rate:.3f} ({tie_rate*100:.1f}%)")
+        print(f"  Non-loss rate: {win_rate + tie_rate:.3f} ({(win_rate + tie_rate)*100:.1f}%)")
+        print(f"  Average score: {avg_score:.2f}")
+        print(f"  Wins: {sum(1 for r in episode_results if r == 1)}, "
+              f"Ties: {ties}, "
+              f"Losses: {sum(1 for r in episode_results if r == -1)}")
+        
+        eval_env.close()
+    
+    return win_rates, tie_rates
+
+
+def create_training_plot(
     training_win_rates: List[float],
     training_timesteps: List[int],
     training_avg_scores: List[float],
     post_train_win_rate: float,
     post_train_avg_score: float,
-    episode_scores: List[float],
-    expected_wins_data: List[Tuple[int, float, float, float]],
+    opponent_win_rates: Optional[Dict[str, float]] = None,
+    opponent_tie_rates: Optional[Dict[str, float]] = None,
 ):
-    """Create a comprehensive plot with all statistics."""
-    fig, axes = plt.subplots(2, 2, figsize=PLOT_FIGURE_SIZE)
-    fig.suptitle('RL Training Statistics', fontsize=16, fontweight='bold')
+    """Create a plot showing win rate and score over training, plus opponent win rates."""
+    if opponent_win_rates:
+        fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+        fig.suptitle('RL Training Statistics', fontsize=16, fontweight='bold')
+        
+        ax1 = axes[0, 0]
+        ax2 = axes[0, 1]
+        ax3 = axes[1, 0]
+        ax4 = axes[1, 1]
+    else:
+        fig, axes = plt.subplots(1, 2, figsize=PLOT_FIGURE_SIZE)
+        fig.suptitle('RL Training Statistics', fontsize=16, fontweight='bold')
+        ax1 = axes[0]
+        ax2 = axes[1]
     
-    ax1 = axes[0, 0]
+    # Training progression: Win Rate
     if training_timesteps and training_win_rates:
         ax1.plot(training_timesteps, training_win_rates, 'b-', linewidth=2, label='Win Rate')
         ax1.axhline(y=post_train_win_rate, color='r', linestyle='--', linewidth=1.5, label=f'Final Win Rate ({post_train_win_rate:.3f})')
@@ -359,7 +470,7 @@ def create_comprehensive_plot(
         ax1.text(0.5, 0.5, 'No training progress data', ha='center', va='center', transform=ax1.transAxes)
         ax1.set_title('Training Progression: Win Rate')
     
-    ax2 = axes[0, 1]
+    # Training progression: Average Score
     if training_timesteps and training_avg_scores:
         ax2.plot(training_timesteps, training_avg_scores, 'g-', linewidth=2, label='Avg Score')
         ax2.axhline(y=post_train_avg_score, color='r', linestyle='--', linewidth=1.5, label=f'Final Avg Score ({post_train_avg_score:.1f})')
@@ -372,38 +483,51 @@ def create_comprehensive_plot(
         ax2.text(0.5, 0.5, 'No training progress data', ha='center', va='center', transform=ax2.transAxes)
         ax2.set_title('Training Progression: Average Score')
     
-    ax3 = axes[1, 0]
-    if expected_wins_data:
-        matches = [x[0] for x in expected_wins_data]
-        expected = [x[1] for x in expected_wins_data]
-        lower = [x[2] for x in expected_wins_data]
-        upper = [x[3] for x in expected_wins_data]
+    # Opponent win rates and tie rates stacked bar chart
+    if opponent_win_rates and opponent_tie_rates:
+        opponent_names = list(opponent_win_rates.keys())
+        win_rate_values = list(opponent_win_rates.values())
+        tie_rate_values = list(opponent_tie_rates.values())
         
-        ax3.plot(matches, expected, 'o-', linewidth=2, markersize=8, label='Expected Wins', color='purple')
-        ax3.fill_between(matches, lower, upper, alpha=0.3, color='purple', label='95% Confidence Interval')
-        ax3.axhline(y=post_train_win_rate * max(matches) if matches else 0, color='r', linestyle='--', linewidth=1, label=f'Win Rate Line ({post_train_win_rate:.3f})')
-        ax3.set_xlabel('Number of Matches')
-        ax3.set_ylabel('Expected Wins')
-        ax3.set_title('Expected Wins in X Matches')
-        ax3.grid(True, alpha=0.3)
+        # Create stacked bar chart: win rates at bottom, tie rates on top
+        bars1 = ax3.bar(opponent_names, win_rate_values, color='green', alpha=0.7, 
+                        edgecolor='black', label='Win Rate')
+        bars2 = ax3.bar(opponent_names, tie_rate_values, bottom=win_rate_values, 
+                        color='blue', alpha=0.7, edgecolor='black', label='Tie Rate')
+        
+        ax3.axhline(y=0.5, color='gray', linestyle='--', linewidth=1, label='50% Reference')
+        ax3.set_ylabel('Rate')
+        ax3.set_title('Win Rate and Tie Rate vs Different Opponents (1v1, 1000 games each)')
+        ax3.set_ylim([0, 1])
+        ax3.grid(True, alpha=0.3, axis='y')
         ax3.legend()
-        ax3.set_xscale('log')
-    else:
-        ax3.text(0.5, 0.5, 'No expected wins data', ha='center', va='center', transform=ax3.transAxes)
-        ax3.set_title('Expected Wins in X Matches')
-    
-    ax4 = axes[1, 1]
-    if episode_scores:
-        ax4.hist(episode_scores, bins=30, edgecolor='black', alpha=0.7, color='orange')
-        ax4.axvline(x=post_train_avg_score, color='r', linestyle='--', linewidth=2, label=f'Mean ({post_train_avg_score:.1f})')
-        ax4.set_xlabel('Final Score')
-        ax4.set_ylabel('Frequency')
-        ax4.set_title('Post-Training Score Distribution')
-        ax4.grid(True, alpha=0.3, axis='y')
-        ax4.legend()
-    else:
-        ax4.text(0.5, 0.5, 'No score data', ha='center', va='center', transform=ax4.transAxes)
-        ax4.set_title('Post-Training Score Distribution')
+        ax3.tick_params(axis='x', rotation=45)
+        
+        # Add value labels on bars
+        for i, (bar1, bar2, win_val, tie_val) in enumerate(zip(bars1, bars2, win_rate_values, tie_rate_values)):
+            # Label for win rate (at middle of win bar)
+            win_height = bar1.get_height()
+            if win_height > 0.05:  # Only label if bar is tall enough
+                ax3.text(bar1.get_x() + bar1.get_width()/2., win_height/2,
+                        f'W:{win_val:.3f}',
+                        ha='center', va='center', fontsize=8, color='white', fontweight='bold')
+            
+            # Label for tie rate (at middle of tie bar)
+            tie_height = bar2.get_height()
+            total_height = win_height + tie_height
+            if tie_height > 0.05:  # Only label if bar is tall enough
+                ax3.text(bar2.get_x() + bar2.get_width()/2., win_height + tie_height/2,
+                        f'T:{tie_val:.3f}',
+                        ha='center', va='center', fontsize=8, color='white', fontweight='bold')
+            
+            # Label for total non-loss rate at top
+            if total_height > 0.1:
+                ax3.text(bar1.get_x() + bar1.get_width()/2., total_height + 0.02,
+                        f'{(win_val + tie_val):.3f}',
+                        ha='center', va='bottom', fontsize=9, fontweight='bold')
+        
+        # Hide the 4th subplot if we have opponent data
+        ax4.axis('off')
     
     plt.tight_layout()
     
@@ -421,26 +545,20 @@ def main():
     
     post_train_win_rate, post_train_avg_score, episode_results, episode_scores = evaluate_trained_agent(model)
     
-    print("\n" + "=" * 80)
-    print("Expected Wins Projection")
-    print("=" * 80)
-    expected_wins_data = []
-    for n_matches in EVAL_N_MATCHES_FOR_PROJECTION:
-        expected, lower, upper = calculate_expected_wins(post_train_win_rate, n_matches)
-        expected_wins_data.append((n_matches, expected, lower, upper))
-        print(f"{n_matches} matches: {expected:.1f} wins (95% CI: {lower:.1f} - {upper:.1f})")
+    # Evaluate against multiple opponents
+    opponent_win_rates, opponent_tie_rates = evaluate_against_opponents(model, n_episodes=1000)
     
     print("\n" + "=" * 80)
     print("Generating Visualization")
     print("=" * 80)
-    create_comprehensive_plot(
+    create_training_plot(
         training_win_rates,
         training_timesteps,
         training_avg_scores,
         post_train_win_rate,
         post_train_avg_score,
-        episode_scores,
-        expected_wins_data,
+        opponent_win_rates,
+        opponent_tie_rates,
     )
     
     print("\n" + "=" * 80)

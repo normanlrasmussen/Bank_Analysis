@@ -15,7 +15,7 @@ if parent_dir not in sys.path:
 
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict
 import gymnasium as gym
 import torch
 import torch.nn as nn
@@ -38,20 +38,24 @@ except ModuleNotFoundError as e:
 ENV_ROUNDS = 10
 ENV_OPPONENTS = [
     ThersholdPlayer(threshold=100),
+    ThersholdPlayer(threshold=180),
+    GreedyPlayer(),
+    SesquaGreedyPlayer(),
+    ProbabilisticPlayer(probability=0.2),
 ]
 ENV_MAX_ROUND_LENGTH = 1000
 
 SAC_DISCRETE_CONFIG = {
     "learning_rate": 3e-4,
     "buffer_size": 100000,
-    "learning_starts": 5000,  # Reduced from 1000 to start learning earlier (but still need buffer)
-    "batch_size": 256,
+    "learning_starts": 1000,
+    "batch_size": 128,
     "tau": 0.005,
     "gamma": 0.99,
     "alpha": 0.2,  # Temperature parameter for entropy (can be tuned)
     "target_update_interval": 1,
-    "gradient_steps": 4,  # Increased from 1 to 4 for more learning per update (PPO does 10 epochs)
-    "train_freq": 4,  # Train every 4 steps instead of every step (more efficient)
+    "gradient_steps": 2,
+    "train_freq": 1,
 }
 
 TRAIN_TOTAL_TIMESTEPS = 100000  # Match PPO's training timesteps for fair comparison
@@ -59,8 +63,6 @@ TRAIN_VERBOSE = 1
 TRAIN_LOG_INTERVAL = 10
 
 EVAL_N_EPISODES = 1000
-EVAL_N_MATCHES_FOR_PROJECTION = [10, 50, 100, 500, 1000]
-
 TRACK_PROGRESS_INTERVAL = 1000
 PROGRESS_EVAL_EPISODES = 20
 
@@ -184,7 +186,6 @@ class SACDiscreteAgent:
         self.batch_size = batch_size
         self.tau = tau
         self.gamma = gamma
-        self.alpha = alpha
         self.learning_starts = learning_starts
         self.target_update_interval = target_update_interval
         self.gradient_steps = gradient_steps
@@ -205,10 +206,15 @@ class SACDiscreteAgent:
         self.q1_target.load_state_dict(self.q1.state_dict())
         self.q2_target.load_state_dict(self.q2.state_dict())
         
+        # Auto-entropy tuning: learnable log_alpha
+        self.log_alpha = torch.tensor(np.log(alpha), requires_grad=True, device=device)
+        self.target_entropy = -float(action_dim - 1)  # or -0.5, tuneable
+        
         # Optimizers
         self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=learning_rate)
         self.q1_optimizer = torch.optim.Adam(self.q1.parameters(), lr=learning_rate)
         self.q2_optimizer = torch.optim.Adam(self.q2.parameters(), lr=learning_rate)
+        self.alpha_optimizer = torch.optim.Adam([self.log_alpha], lr=learning_rate)
         
         # Replay buffer (optimized with pre-allocated arrays)
         self.replay_buffer = ReplayBuffer(buffer_size, obs_dim)
@@ -231,7 +237,7 @@ class SACDiscreteAgent:
         if len(self.replay_buffer) < self.learning_starts:
             return {}
         
-        losses = {"q1_loss": 0.0, "q2_loss": 0.0, "actor_loss": 0.0}
+        losses = {"q1_loss": 0.0, "q2_loss": 0.0, "actor_loss": 0.0, "alpha_loss": 0.0}
         
         for _ in range(self.gradient_steps):
             # Sample from replay buffer (already numpy arrays)
@@ -254,9 +260,12 @@ class SACDiscreteAgent:
                 q2_next = self.q2_target(next_obs_tensor)
                 q_next = torch.min(q1_next, q2_next)
                 
+                # Use learnable alpha
+                alpha = self.log_alpha.exp()
+                
                 # Vectorized target computation
                 target_q = rewards_tensor + (1.0 - dones_tensor) * self.gamma * (
-                    torch.sum(next_probs * (q_next - self.alpha * next_log_probs), dim=1)
+                    torch.sum(next_probs * (q_next - alpha * next_log_probs), dim=1)
                 )
             
             # Update Q networks (compute both in parallel)
@@ -285,15 +294,31 @@ class SACDiscreteAgent:
             # Reuse Q values but detach them (we don't need gradients through Q networks for actor)
             q_vals = torch.min(q1_values.detach(), q2_values.detach())
             
-            actor_loss = torch.sum(probs * (self.alpha * log_probs - q_vals), dim=1).mean()
+            # Use learnable alpha
+            alpha = self.log_alpha.exp()
+            
+            actor_loss = torch.sum(probs * (alpha * log_probs - q_vals), dim=1).mean()
             
             self.actor_optimizer.zero_grad(set_to_none=True)
             actor_loss.backward()
             self.actor_optimizer.step()
             
+            # Entropy tuning loss
+            with torch.no_grad():
+                entropy = -torch.sum(probs * log_probs, dim=1)
+            
+            alpha_loss = (self.log_alpha * (entropy - self.target_entropy).detach()).mean()
+            self.alpha_optimizer.zero_grad(set_to_none=True)
+            alpha_loss.backward()
+            self.alpha_optimizer.step()
+            
+            # Store current alpha value if needed
+            self.alpha = self.log_alpha.exp().item()
+            
             losses["q1_loss"] += q1_loss.item()
             losses["q2_loss"] += q2_loss.item()
             losses["actor_loss"] += actor_loss.item()
+            losses["alpha_loss"] += alpha_loss.item()
             
             # Soft update target networks (only when needed)
             if self.num_updates % self.target_update_interval == 0:
@@ -311,6 +336,7 @@ class SACDiscreteAgent:
             losses["q1_loss"] /= self.gradient_steps
             losses["q2_loss"] /= self.gradient_steps
             losses["actor_loss"] /= self.gradient_steps
+            losses["alpha_loss"] /= self.gradient_steps
         
         return losses
     
@@ -376,6 +402,8 @@ class SACDiscreteAgent:
             'q2': self.q2.state_dict(),
             'q1_target': self.q1_target.state_dict(),
             'q2_target': self.q2_target.state_dict(),
+            'log_alpha': self.log_alpha,
+            'alpha_optimizer': self.alpha_optimizer.state_dict(),
         }, path)
     
     @classmethod
@@ -388,6 +416,10 @@ class SACDiscreteAgent:
         agent.q2.load_state_dict(checkpoint['q2'])
         agent.q1_target.load_state_dict(checkpoint['q1_target'])
         agent.q2_target.load_state_dict(checkpoint['q2_target'])
+        if 'log_alpha' in checkpoint:
+            agent.log_alpha.data = checkpoint['log_alpha'].to(agent.device)
+        if 'alpha_optimizer' in checkpoint:
+            agent.alpha_optimizer.load_state_dict(checkpoint['alpha_optimizer'])
         return agent
 
 
@@ -444,14 +476,6 @@ def evaluate_agent(env: BankEnv, agent, n_episodes: int = 100) -> Tuple[float, f
     return win_rate, avg_score, episode_results, episode_scores
 
 
-def calculate_expected_wins(win_rate: float, n_matches: int) -> Tuple[float, float, float]:
-    """Calculate expected wins with 95% confidence intervals."""
-    expected_wins = win_rate * n_matches
-    std = np.sqrt(win_rate * (1 - win_rate) * n_matches)
-    lower_bound = max(0, expected_wins - 1.96 * std)
-    upper_bound = min(n_matches, expected_wins + 1.96 * std)
-    
-    return expected_wins, lower_bound, upper_bound
 
 
 class ProgressTrackingCallback:
@@ -573,20 +597,85 @@ def evaluate_trained_agent(agent):
     return win_rate, avg_score, episode_results, episode_scores
 
 
-def create_comprehensive_plot(
+def evaluate_against_opponents(agent, n_episodes: int = 1000) -> Tuple[Dict[str, float], Dict[str, float]]:
+    """Evaluate the trained agent against multiple opponent types in 1v1 matches.
+    
+    Returns:
+        Tuple of (win_rates, tie_rates) dictionaries
+    """
+    print("\n" + "=" * 80)
+    print("Evaluating Against Multiple Opponents (1v1)")
+    print("=" * 80)
+    
+    opponents = [
+        ("Threshold 100", ThersholdPlayer(threshold=100)),
+        ("Threshold 200", ThersholdPlayer(threshold=200)),
+        ("Greedy", GreedyPlayer()),
+        ("SesquaGreedy", SesquaGreedyPlayer()),
+        ("Probabilistic 0.2", ProbabilisticPlayer(probability=0.2)),
+    ]
+    
+    win_rates = {}
+    tie_rates = {}
+    
+    for opponent_name, opponent in opponents:
+        print(f"\nEvaluating against {opponent_name}...")
+        
+        eval_env = BankEnv(
+            rounds=ENV_ROUNDS,
+            opponents=[opponent],
+            max_round_length=ENV_MAX_ROUND_LENGTH,
+            verbose=False,
+        )
+        
+        win_rate, avg_score, episode_results, episode_scores = evaluate_agent(
+            eval_env, agent, n_episodes
+        )
+        
+        # Calculate tie rate
+        ties = sum(1 for r in episode_results if r == 0)
+        tie_rate = ties / n_episodes
+        
+        win_rates[opponent_name] = win_rate
+        tie_rates[opponent_name] = tie_rate
+        print(f"  Win rate: {win_rate:.3f} ({win_rate*100:.1f}%)")
+        print(f"  Tie rate: {tie_rate:.3f} ({tie_rate*100:.1f}%)")
+        print(f"  Non-loss rate: {win_rate + tie_rate:.3f} ({(win_rate + tie_rate)*100:.1f}%)")
+        print(f"  Average score: {avg_score:.2f}")
+        print(f"  Wins: {sum(1 for r in episode_results if r == 1)}, "
+              f"Ties: {ties}, "
+              f"Losses: {sum(1 for r in episode_results if r == -1)}")
+        
+        eval_env.close()
+    
+    return win_rates, tie_rates
+
+
+def create_training_plot(
     training_win_rates: List[float],
     training_timesteps: List[int],
     training_avg_scores: List[float],
     post_train_win_rate: float,
     post_train_avg_score: float,
-    episode_scores: List[float],
-    expected_wins_data: List[Tuple[int, float, float, float]],
+    opponent_win_rates: Optional[Dict[str, float]] = None,
+    opponent_tie_rates: Optional[Dict[str, float]] = None,
 ):
-    """Create a comprehensive plot with all statistics."""
-    fig, axes = plt.subplots(2, 2, figsize=PLOT_FIGURE_SIZE)
-    fig.suptitle('RL Training Statistics (SAC-Discrete - CleanRL)', fontsize=16, fontweight='bold')
+    """Create a plot showing win rate and score over training, plus opponent win rates."""
+    if opponent_win_rates:
+        fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+        fig.suptitle('RL Training Statistics (SAC-Discrete - CleanRL)', fontsize=16, fontweight='bold')
+        
+        ax1 = axes[0, 0]
+        ax2 = axes[0, 1]
+        ax3 = axes[1, 0]
+        ax4 = axes[1, 1]
+    else:
+        fig, axes = plt.subplots(1, 2, figsize=PLOT_FIGURE_SIZE)
+        fig.suptitle('RL Training Statistics (SAC-Discrete - CleanRL)', fontsize=16, fontweight='bold')
+        ax1 = axes[0]
+        ax2 = axes[1]
     
-    ax1 = axes[0, 0]
+    # Training progression: Win Rate
     if training_timesteps and training_win_rates:
         ax1.plot(training_timesteps, training_win_rates, 'b-', linewidth=2, label='Win Rate')
         ax1.axhline(y=post_train_win_rate, color='r', linestyle='--', linewidth=1.5, label=f'Final Win Rate ({post_train_win_rate:.3f})')
@@ -600,7 +689,7 @@ def create_comprehensive_plot(
         ax1.text(0.5, 0.5, 'No training progress data', ha='center', va='center', transform=ax1.transAxes)
         ax1.set_title('Training Progression: Win Rate')
     
-    ax2 = axes[0, 1]
+    # Training progression: Average Score
     if training_timesteps and training_avg_scores:
         ax2.plot(training_timesteps, training_avg_scores, 'g-', linewidth=2, label='Avg Score')
         ax2.axhline(y=post_train_avg_score, color='r', linestyle='--', linewidth=1.5, label=f'Final Avg Score ({post_train_avg_score:.1f})')
@@ -613,38 +702,51 @@ def create_comprehensive_plot(
         ax2.text(0.5, 0.5, 'No training progress data', ha='center', va='center', transform=ax2.transAxes)
         ax2.set_title('Training Progression: Average Score')
     
-    ax3 = axes[1, 0]
-    if expected_wins_data:
-        matches = [x[0] for x in expected_wins_data]
-        expected = [x[1] for x in expected_wins_data]
-        lower = [x[2] for x in expected_wins_data]
-        upper = [x[3] for x in expected_wins_data]
+    # Opponent win rates and tie rates stacked bar chart
+    if opponent_win_rates and opponent_tie_rates:
+        opponent_names = list(opponent_win_rates.keys())
+        win_rate_values = list(opponent_win_rates.values())
+        tie_rate_values = list(opponent_tie_rates.values())
         
-        ax3.plot(matches, expected, 'o-', linewidth=2, markersize=8, label='Expected Wins', color='purple')
-        ax3.fill_between(matches, lower, upper, alpha=0.3, color='purple', label='95% Confidence Interval')
-        ax3.axhline(y=post_train_win_rate * max(matches) if matches else 0, color='r', linestyle='--', linewidth=1, label=f'Win Rate Line ({post_train_win_rate:.3f})')
-        ax3.set_xlabel('Number of Matches')
-        ax3.set_ylabel('Expected Wins')
-        ax3.set_title('Expected Wins in X Matches')
-        ax3.grid(True, alpha=0.3)
+        # Create stacked bar chart: win rates at bottom, tie rates on top
+        bars1 = ax3.bar(opponent_names, win_rate_values, color='green', alpha=0.7, 
+                        edgecolor='black', label='Win Rate')
+        bars2 = ax3.bar(opponent_names, tie_rate_values, bottom=win_rate_values, 
+                        color='blue', alpha=0.7, edgecolor='black', label='Tie Rate')
+        
+        ax3.axhline(y=0.5, color='gray', linestyle='--', linewidth=1, label='50% Reference')
+        ax3.set_ylabel('Rate')
+        ax3.set_title('Win Rate and Tie Rate vs Different Opponents (1v1, 1000 games each)')
+        ax3.set_ylim([0, 1])
+        ax3.grid(True, alpha=0.3, axis='y')
         ax3.legend()
-        ax3.set_xscale('log')
-    else:
-        ax3.text(0.5, 0.5, 'No expected wins data', ha='center', va='center', transform=ax3.transAxes)
-        ax3.set_title('Expected Wins in X Matches')
-    
-    ax4 = axes[1, 1]
-    if episode_scores:
-        ax4.hist(episode_scores, bins=30, edgecolor='black', alpha=0.7, color='orange')
-        ax4.axvline(x=post_train_avg_score, color='r', linestyle='--', linewidth=2, label=f'Mean ({post_train_avg_score:.1f})')
-        ax4.set_xlabel('Final Score')
-        ax4.set_ylabel('Frequency')
-        ax4.set_title('Post-Training Score Distribution')
-        ax4.grid(True, alpha=0.3, axis='y')
-        ax4.legend()
-    else:
-        ax4.text(0.5, 0.5, 'No score data', ha='center', va='center', transform=ax4.transAxes)
-        ax4.set_title('Post-Training Score Distribution')
+        ax3.tick_params(axis='x', rotation=45)
+        
+        # Add value labels on bars
+        for i, (bar1, bar2, win_val, tie_val) in enumerate(zip(bars1, bars2, win_rate_values, tie_rate_values)):
+            # Label for win rate (at middle of win bar)
+            win_height = bar1.get_height()
+            if win_height > 0.05:  # Only label if bar is tall enough
+                ax3.text(bar1.get_x() + bar1.get_width()/2., win_height/2,
+                        f'W:{win_val:.3f}',
+                        ha='center', va='center', fontsize=8, color='white', fontweight='bold')
+            
+            # Label for tie rate (at middle of tie bar)
+            tie_height = bar2.get_height()
+            total_height = win_height + tie_height
+            if tie_height > 0.05:  # Only label if bar is tall enough
+                ax3.text(bar2.get_x() + bar2.get_width()/2., win_height + tie_height/2,
+                        f'T:{tie_val:.3f}',
+                        ha='center', va='center', fontsize=8, color='white', fontweight='bold')
+            
+            # Label for total non-loss rate at top
+            if total_height > 0.1:
+                ax3.text(bar1.get_x() + bar1.get_width()/2., total_height + 0.02,
+                        f'{(win_val + tie_val):.3f}',
+                        ha='center', va='bottom', fontsize=9, fontweight='bold')
+        
+        # Hide the 4th subplot if we have opponent data
+        ax4.axis('off')
     
     plt.tight_layout()
     
@@ -662,26 +764,20 @@ def main():
     
     post_train_win_rate, post_train_avg_score, episode_results, episode_scores = evaluate_trained_agent(agent)
     
-    print("\n" + "=" * 80)
-    print("Expected Wins Projection")
-    print("=" * 80)
-    expected_wins_data = []
-    for n_matches in EVAL_N_MATCHES_FOR_PROJECTION:
-        expected, lower, upper = calculate_expected_wins(post_train_win_rate, n_matches)
-        expected_wins_data.append((n_matches, expected, lower, upper))
-        print(f"{n_matches} matches: {expected:.1f} wins (95% CI: {lower:.1f} - {upper:.1f})")
+    # Evaluate against multiple opponents
+    opponent_win_rates, opponent_tie_rates = evaluate_against_opponents(agent, n_episodes=1000)
     
     print("\n" + "=" * 80)
     print("Generating Visualization")
     print("=" * 80)
-    create_comprehensive_plot(
+    create_training_plot(
         training_win_rates,
         training_timesteps,
         training_avg_scores,
         post_train_win_rate,
         post_train_avg_score,
-        episode_scores,
-        expected_wins_data,
+        opponent_win_rates,
+        opponent_tie_rates,
     )
     
     print("\n" + "=" * 80)

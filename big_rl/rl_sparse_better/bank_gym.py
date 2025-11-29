@@ -1,3 +1,5 @@
+# This file will have sparse rewards, so the agent will only be rewarded for winning the game, and not for each step.
+
 import numpy as np
 import copy
 import gymnasium as gym
@@ -54,10 +56,13 @@ class BankEnv(gym.Env):
         self.render_mode = render_mode
         
         # Set up opponents (empty list if None)
+        # Store base_opponents pool for sampling in reset()
         if opponents is None:
             opponents = []
-        self.opponents = opponents
-        self.n_opponents = len(opponents)
+        self.base_opponents = opponents
+        # Will be set in reset() after sampling
+        self.opponents = []
+        self.n_opponents = 1 if len(opponents) > 0 else 0  # Always use 1 opponent if pool is non-empty
         self.n_players = 1 + self.n_opponents
         
         # Action space: 0 = roll, 1 = bank
@@ -98,14 +103,15 @@ class BankEnv(gym.Env):
         obs = self._obs_buffer
         obs.fill(0.0)
         
-        # Normalize Scores
-        current_score_scale = 5000.0
-        obs[0] = np.tanh(float(self.current_state["current_score"]) / current_score_scale)
+        # Normalize Scores - use consistent scaling for both current_score and player_scores
+        score_scale = 5000.0
+        obs[0] = float(self.current_state["current_score"]) / score_scale
+        
         obs[1] = float(self.current_state["rounds_remaining"]) / float(max(self.rounds, 1))
-        score_scale = 1000.0 * self.rounds if self.rounds > 0 else 1000.0
+        
         player_scores = self.current_state["player_scores"]
         for i in range(self.n_players):
-            obs[2 + i] = np.tanh(float(player_scores[i]) / score_scale)
+            obs[2 + i] = float(player_scores[i]) / score_scale
         
         players_in = self.current_state["players_in"]
         for i in range(self.n_players):
@@ -125,6 +131,7 @@ class BankEnv(gym.Env):
         
         if self.current_round > self.rounds:
             final_scores = player_scores.copy()
+            self._player_scores = player_scores.copy()
             reward += self._calculate_final_reward()
             self.current_state = None
             terminated = True
@@ -176,8 +183,14 @@ class BankEnv(gym.Env):
         """
         super().reset(seed=seed)
         
+        # Sample one opponent from the pool (if pool is non-empty)
+        if len(self.base_opponents) > 0:
+            sampled_opponent = np.random.choice(self.base_opponents)
+            fresh_opponents = [copy.deepcopy(sampled_opponent)]
+        else:
+            fresh_opponents = []
         
-        fresh_opponents = [copy.deepcopy(opp) for opp in self.opponents]
+        self.opponents = fresh_opponents
         rl_player = RLPlayer(self)
         self.all_players = [rl_player] + fresh_opponents
         
@@ -286,7 +299,22 @@ class BankEnv(gym.Env):
     
     def _calculate_final_reward(self) -> float:
         """Calculate final reward at the end of the game."""
-        return 0.0
+        scores = self._player_scores
+
+        agent_score = scores[0]
+
+        max_other = np.max(scores[1:]) if self.n_players > 1 else 0
+
+        diff = agent_score - max_other
+
+        if diff > 0:
+            # positive margin, cap to avoid huge rewards
+            return 1.0 + 0.001 * np.clip(diff, 0, 5000)
+        elif diff == 0:
+            return 0.0
+        else:
+            # losing – keep negative but smaller magnitude
+            return -1.0 + 0.001 * np.clip(diff, -5000, 0)
     
     def render(self):
         """Render the environment."""
