@@ -65,7 +65,7 @@ ENV_OPPONENTS = [
     ThersholdPlayer(threshold=2000),
     ProbabilisticPlayer(probability=0.2),
 ]  # List of opponents for the RL agent
-ENV_MAX_ROUND_LENGTH = 100  # Maximum steps per round
+ENV_MAX_ROUND_LENGTH = 1000  # Maximum steps per round
 
 # ============================================================================
 # ALGORITHM SELECTION - Choose one of the top 3 recommended algorithms

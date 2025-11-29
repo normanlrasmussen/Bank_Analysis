@@ -42,7 +42,7 @@ ENV_ROUNDS = 10
 ENV_OPPONENTS = [
     ThersholdPlayer(threshold=200),
 ]
-ENV_MAX_ROUND_LENGTH = 100
+ENV_MAX_ROUND_LENGTH = 1000
 
 PPO_CONFIG = {
     "learning_rate": 1e-4,

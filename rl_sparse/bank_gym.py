@@ -34,7 +34,7 @@ class BankEnv(gym.Env):
         self,
         rounds: int = 10,
         opponents: Optional[list[Player]] = None,
-        max_round_length: int = 100,
+        max_round_length: int = 1000,
         verbose: bool = False,
         render_mode: Optional[str] = None,
     ):

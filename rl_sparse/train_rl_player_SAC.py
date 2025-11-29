@@ -39,7 +39,7 @@ ENV_ROUNDS = 10
 ENV_OPPONENTS = [
     ThersholdPlayer(threshold=100),
 ]
-ENV_MAX_ROUND_LENGTH = 100
+ENV_MAX_ROUND_LENGTH = 1000
 
 SAC_DISCRETE_CONFIG = {
     "learning_rate": 3e-4,
