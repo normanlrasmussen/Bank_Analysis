@@ -41,11 +41,7 @@ except ModuleNotFoundError as e:
 
 ENV_ROUNDS = 10
 ENV_OPPONENTS = [
-    ThersholdPlayer(threshold=100),
-    ThersholdPlayer(threshold=180),
-    GreedyPlayer(),
-    SesquaGreedyPlayer(),
-    ProbabilisticPlayer(probability=0.2),
+    
 ]
 ENV_MAX_ROUND_LENGTH = 1000
 
@@ -62,7 +58,7 @@ PPO_CONFIG = {
     "max_grad_norm": 0.5,
 }
 
-TRAIN_TOTAL_TIMESTEPS = 200000
+TRAIN_TOTAL_TIMESTEPS = 1000000
 TRAIN_VERBOSE = 1
 TRAIN_LOG_INTERVAL = 10
 
@@ -71,12 +67,12 @@ TRACK_PROGRESS_INTERVAL = 1000
 PROGRESS_EVAL_EPISODES = 20
 
 SAVE_MODEL = True
-MODEL_SAVE_PATH = str(script_dir / "RL_data" / "rl_bank_model_ppo_200.zip")
+MODEL_SAVE_PATH = str(script_dir / "RL_data" / "rl_bank_model_ppo_solo.zip")
 
 PLOT_FIGURE_SIZE = (14, 10)
 PLOT_DPI = 100
 SAVE_PLOT = True
-PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_ppo_200.png")
+PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_ppo_solo.png")
 
 
 def evaluate_agent(env, model, n_episodes: int = 100) -> Tuple[float, float, List[int], List[float]]:

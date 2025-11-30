@@ -40,13 +40,21 @@ except ModuleNotFoundError as e:
         raise
 
 ENV_ROUNDS = 10
-ENV_OPPONENTS = [
-    ThersholdPlayer(threshold=100),
-    ThersholdPlayer(threshold=180),
-    GreedyPlayer(),
-    SesquaGreedyPlayer(),
-    ProbabilisticPlayer(probability=0.2),
-]
+# ENV_OPPONENTS = [
+#     ThersholdPlayer(threshold=100),
+#     ThersholdPlayer(threshold=180),
+#     ThersholdPlayer(threshold=250),
+#     ThersholdPlayer(threshold=500),
+#     GreedyPlayer(),
+#     SesquaGreedyPlayer(),
+# ]
+# ENV_OPPONENTS = [
+#     ThersholdPlayer(threshold=100),
+#     ThersholdPlayer(threshold=180),
+#     GreedyPlayer(),
+#     SesquaGreedyPlayer(),
+#     ProbabilisticPlayer(probability=0.2),
+# ]
 ENV_MAX_ROUND_LENGTH = 1000
 
 PPO_CONFIG = {
@@ -62,7 +70,7 @@ PPO_CONFIG = {
     "max_grad_norm": 0.5,
 }
 
-TRAIN_TOTAL_TIMESTEPS = 100000
+TRAIN_TOTAL_TIMESTEPS = 1000000
 TRAIN_VERBOSE = 1
 TRAIN_LOG_INTERVAL = 10
 
@@ -71,12 +79,12 @@ TRACK_PROGRESS_INTERVAL = 1000
 PROGRESS_EVAL_EPISODES = 20
 
 SAVE_MODEL = True
-MODEL_SAVE_PATH = str(script_dir / "RL_data" / "rl_bank_model_ppo_200.zip")
+MODEL_SAVE_PATH = str(script_dir / "RL_data" / "rl_bank_model_ppo_multi_2.zip")
 
 PLOT_FIGURE_SIZE = (14, 10)
 PLOT_DPI = 100
 SAVE_PLOT = True
-PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_ppo_200.png")
+PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_ppo_multi_2.png")
 
 
 def evaluate_agent(env, model, n_episodes: int = 100) -> Tuple[float, float, List[int], List[float]]:

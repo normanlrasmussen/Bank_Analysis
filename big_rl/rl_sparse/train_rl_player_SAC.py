@@ -67,12 +67,12 @@ TRACK_PROGRESS_INTERVAL = 1000
 PROGRESS_EVAL_EPISODES = 20
 
 SAVE_MODEL = True
-MODEL_SAVE_PATH = str(script_dir / "RL_data" / "rl_bank_model_sac_discrete.zip")
+MODEL_SAVE_PATH = str(script_dir / "RL_data" / "rl_bank_model_sac_mutli.zip")
 
 PLOT_FIGURE_SIZE = (14, 10)
 PLOT_DPI = 100
 SAVE_PLOT = True
-PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_sac_discrete.png")
+PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_sac_mutli.png")
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
