@@ -1,0 +1,1970 @@
+====================================================================================================
+PPO TOURNAMENT STATISTICS
+====================================================================================================
+
+Configuration:
+  Games per matchup: 1000
+  Rounds per game: 10
+  Total matchups: 7 models × 5 opponents = 35
+
+====================================================================================================
+
+
+====================================================================================================
+MODEL: RL_ROUND_MULTI
+====================================================================================================
+
+  Opponent: 100 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        778.33
+      Max:       19404.00
+      Min:           0.00
+      Variance: 7021260.42
+
+    Points per round (average):
+      Mean:         77.83
+      Max:        1940.40
+      Min:           0.00
+      Variance:  70212.60
+
+    Bust percentage (PPO):
+      Mean:        0.9911 (99.11%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.000871
+
+    Bust percentage (Opponent):
+      Mean:        0.5083 (50.83%)
+      Max:         1.0000 (100.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.024301
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      After opponent:
+        Mean:          0.09
+        Max:           2.00
+        Min:           0.00
+        Variance:      0.09
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         59.85
+      Max:         136.00
+      Min:          22.00
+      Variance:    277.88
+
+    Average rolls per round:
+      Mean:          5.99
+      Max:          13.60
+      Min:           2.20
+      Variance:      2.78
+
+  Opponent: 180 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        862.51
+      Max:       20682.00
+      Min:           0.00
+      Variance: 7991496.08
+
+    Points per round (average):
+      Mean:         86.25
+      Max:        2068.20
+      Min:           0.00
+      Variance:  79914.96
+
+    Bust percentage (PPO):
+      Mean:        0.9900 (99.00%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.001000
+
+    Bust percentage (Opponent):
+      Mean:        0.6955 (69.55%)
+      Max:         1.0000 (100.00%)
+      Min:         0.2000 (20.00%)
+      Variance:  0.020230
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      After opponent:
+        Mean:          0.10
+        Max:           2.00
+        Min:           0.00
+        Variance:      0.10
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         58.99
+      Max:         122.00
+      Min:          21.00
+      Variance:    288.50
+
+    Average rolls per round:
+      Mean:          5.90
+      Max:          12.20
+      Min:           2.10
+      Variance:      2.88
+
+  Opponent: Greedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        786.73
+      Max:       33168.00
+      Min:           0.00
+      Variance: 6016787.82
+
+    Points per round (average):
+      Mean:         78.67
+      Max:        3316.80
+      Min:           0.00
+      Variance:  60167.88
+
+    Bust percentage (PPO):
+      Mean:        0.9862 (98.62%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.001310
+
+    Bust percentage (Opponent):
+      Mean:        0.9888 (98.88%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.001075
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.14
+        Max:           2.00
+        Min:           0.00
+        Variance:      0.13
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         59.43
+      Max:         130.00
+      Min:          16.00
+      Variance:    295.00
+
+    Average rolls per round:
+      Mean:          5.94
+      Max:          13.00
+      Min:           1.60
+      Variance:      2.95
+
+  Opponent: Sesquagreedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        914.54
+      Max:       30608.00
+      Min:           0.00
+      Variance: 6613282.98
+
+    Points per round (average):
+      Mean:         91.45
+      Max:        3060.80
+      Min:           0.00
+      Variance:  66132.83
+
+    Bust percentage (PPO):
+      Mean:        0.9839 (98.39%)
+      Max:         1.0000 (100.00%)
+      Min:         0.7000 (70.00%)
+      Variance:  0.001511
+
+    Bust percentage (Opponent):
+      Mean:        0.9865 (98.65%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.001228
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.16
+        Max:           3.00
+        Min:           0.00
+        Variance:      0.15
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         59.75
+      Max:         123.00
+      Min:          25.00
+      Variance:    281.55
+
+    Average rolls per round:
+      Mean:          5.98
+      Max:          12.30
+      Min:           2.50
+      Variance:      2.82
+
+  Opponent: Troll
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        952.42
+      Max:       17062.00
+      Min:           0.00
+      Variance: 5480729.84
+
+    Points per round (average):
+      Mean:         95.24
+      Max:        1706.20
+      Min:           0.00
+      Variance:  54807.30
+
+    Bust percentage (PPO):
+      Mean:        0.9825 (98.25%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.001664
+
+    Bust percentage (Opponent):
+      Mean:        1.0000 (100.00%)
+      Max:         1.0000 (100.00%)
+      Min:         1.0000 (100.00%)
+      Variance:  0.000000
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.17
+        Max:           2.00
+        Min:           0.00
+        Variance:      0.17
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         60.50
+      Max:         144.00
+      Min:          24.00
+      Variance:    307.83
+
+    Average rolls per round:
+      Mean:          6.05
+      Max:          14.40
+      Min:           2.40
+      Variance:      3.08
+
+
+====================================================================================================
+MODEL: RL_SCORE_MULTI
+====================================================================================================
+
+  Opponent: 100 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        628.27
+      Max:        2184.00
+      Min:          67.00
+      Variance: 244432.30
+
+    Points per round (average):
+      Mean:         62.83
+      Max:         218.40
+      Min:           6.70
+      Variance:   2444.32
+
+    Bust percentage (PPO):
+      Mean:        0.4343 (43.43%)
+      Max:         0.6000 (60.00%)
+      Min:         0.1000 (10.00%)
+      Variance:  0.007574
+
+    Bust percentage (Opponent):
+      Mean:        0.5131 (51.31%)
+      Max:         1.0000 (100.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.023278
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          4.58
+        Max:           6.00
+        Min:           3.00
+        Variance:      0.31
+      After opponent:
+        Mean:          0.56
+        Max:           4.00
+        Min:           0.00
+        Variance:      0.58
+      With opponent:
+        Mean:          0.52
+        Max:           3.00
+        Min:           0.00
+        Variance:      0.53
+
+    Total rolls per game:
+      Mean:         40.63
+      Max:          84.00
+      Min:          14.00
+      Variance:    115.39
+
+    Average rolls per round:
+      Mean:          4.06
+      Max:           8.40
+      Min:           1.40
+      Variance:      1.15
+
+  Opponent: 180 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        630.65
+      Max:        2291.00
+      Min:          68.00
+      Variance: 246367.44
+
+    Points per round (average):
+      Mean:         63.06
+      Max:         229.10
+      Min:           6.80
+      Variance:   2463.67
+
+    Bust percentage (PPO):
+      Mean:        0.4314 (43.14%)
+      Max:         0.6000 (60.00%)
+      Min:         0.1000 (10.00%)
+      Variance:  0.007874
+
+    Bust percentage (Opponent):
+      Mean:        0.6974 (69.74%)
+      Max:         1.0000 (100.00%)
+      Min:         0.2000 (20.00%)
+      Variance:  0.021513
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          5.03
+        Max:           6.00
+        Min:           4.00
+        Variance:      0.18
+      After opponent:
+        Mean:          0.40
+        Max:           3.00
+        Min:           0.00
+        Variance:      0.38
+      With opponent:
+        Mean:          0.25
+        Max:           3.00
+        Min:           0.00
+        Variance:      0.25
+
+    Total rolls per game:
+      Mean:         46.25
+      Max:         101.00
+      Min:          19.00
+      Variance:    124.00
+
+    Average rolls per round:
+      Mean:          4.62
+      Max:          10.10
+      Min:           1.90
+      Variance:      1.24
+
+  Opponent: Greedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        634.14
+      Max:        2321.00
+      Min:          61.00
+      Variance: 239200.13
+
+    Points per round (average):
+      Mean:         63.41
+      Max:         232.10
+      Min:           6.10
+      Variance:   2392.00
+
+    Bust percentage (PPO):
+      Mean:        0.4216 (42.16%)
+      Max:         0.6000 (60.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.007793
+
+    Bust percentage (Opponent):
+      Mean:        0.5209 (52.09%)
+      Max:         0.9000 (90.00%)
+      Min:         0.2000 (20.00%)
+      Variance:  0.013313
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          5.78
+        Max:          10.00
+        Min:           4.00
+        Variance:      0.78
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         31.41
+      Max:          67.00
+      Min:          13.00
+      Variance:     82.20
+
+    Average rolls per round:
+      Mean:          3.14
+      Max:           6.70
+      Min:           1.30
+      Variance:      0.82
+
+  Opponent: Sesquagreedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        636.32
+      Max:        2401.00
+      Min:          62.00
+      Variance: 246492.15
+
+    Points per round (average):
+      Mean:         63.63
+      Max:         240.10
+      Min:           6.20
+      Variance:   2464.92
+
+    Bust percentage (PPO):
+      Mean:        0.4263 (42.63%)
+      Max:         0.6000 (60.00%)
+      Min:         0.1000 (10.00%)
+      Variance:  0.007898
+
+    Bust percentage (Opponent):
+      Mean:        0.5533 (55.33%)
+      Max:         1.0000 (100.00%)
+      Min:         0.2000 (20.00%)
+      Variance:  0.022909
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          5.74
+        Max:           9.00
+        Min:           4.00
+        Variance:      0.79
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         33.08
+      Max:          78.00
+      Min:          11.00
+      Variance:    102.01
+
+    Average rolls per round:
+      Mean:          3.31
+      Max:           7.80
+      Min:           1.10
+      Variance:      1.02
+
+  Opponent: Troll
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        622.03
+      Max:        2053.00
+      Min:          71.00
+      Variance: 219763.70
+
+    Points per round (average):
+      Mean:         62.20
+      Max:         205.30
+      Min:           7.10
+      Variance:   2197.64
+
+    Bust percentage (PPO):
+      Mean:        0.4120 (41.20%)
+      Max:         0.6000 (60.00%)
+      Min:         0.1000 (10.00%)
+      Variance:  0.008596
+
+    Bust percentage (Opponent):
+      Mean:        1.0000 (100.00%)
+      Max:         1.0000 (100.00%)
+      Min:         1.0000 (100.00%)
+      Variance:  0.000000
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          5.88
+        Max:           9.00
+        Min:           4.00
+        Variance:      0.86
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         59.51
+      Max:         128.00
+      Min:          21.00
+      Variance:    288.49
+
+    Average rolls per round:
+      Mean:          5.95
+      Max:          12.80
+      Min:           2.10
+      Variance:      2.88
+
+
+====================================================================================================
+MODEL: RL_SPARSE_MULTI
+====================================================================================================
+
+  Opponent: 100 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        737.08
+      Max:       11074.00
+      Min:           0.00
+      Variance: 5205164.11
+
+    Points per round (average):
+      Mean:         73.71
+      Max:        1107.40
+      Min:           0.00
+      Variance:  52051.64
+
+    Bust percentage (PPO):
+      Mean:        0.9641 (96.41%)
+      Max:         1.0000 (100.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.017441
+
+    Bust percentage (Opponent):
+      Mean:        0.5213 (52.13%)
+      Max:         1.0000 (100.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.024676
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.14
+        Max:           9.00
+        Min:           0.00
+        Variance:      0.74
+      After opponent:
+        Mean:          0.20
+        Max:           6.00
+        Min:           0.00
+        Variance:      0.58
+      With opponent:
+        Mean:          0.02
+        Max:           3.00
+        Min:           0.00
+        Variance:      0.03
+
+    Total rolls per game:
+      Mean:         57.73
+      Max:         150.00
+      Min:          23.00
+      Variance:    246.34
+
+    Average rolls per round:
+      Mean:          5.77
+      Max:          15.00
+      Min:           2.30
+      Variance:      2.46
+
+  Opponent: 180 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        916.11
+      Max:       11096.00
+      Min:           0.00
+      Variance: 6285997.11
+
+    Points per round (average):
+      Mean:         91.61
+      Max:        1109.60
+      Min:           0.00
+      Variance:  62859.97
+
+    Bust percentage (PPO):
+      Mean:        0.9556 (95.56%)
+      Max:         1.0000 (100.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.022809
+
+    Bust percentage (Opponent):
+      Mean:        0.6940 (69.40%)
+      Max:         1.0000 (100.00%)
+      Min:         0.2000 (20.00%)
+      Variance:  0.023244
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.22
+        Max:           9.00
+        Min:           0.00
+        Variance:      1.34
+      After opponent:
+        Mean:          0.21
+        Max:           6.00
+        Min:           0.00
+        Variance:      0.50
+      With opponent:
+        Mean:          0.01
+        Max:           2.00
+        Min:           0.00
+        Variance:      0.01
+
+    Total rolls per game:
+      Mean:         57.93
+      Max:         111.00
+      Min:          19.00
+      Variance:    248.05
+
+    Average rolls per round:
+      Mean:          5.79
+      Max:          11.10
+      Min:           1.90
+      Variance:      2.48
+
+  Opponent: Greedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        828.27
+      Max:       24944.00
+      Min:           0.00
+      Variance: 8414009.77
+
+    Points per round (average):
+      Mean:         82.83
+      Max:        2494.40
+      Min:           0.00
+      Variance:  84140.10
+
+    Bust percentage (PPO):
+      Mean:        0.9836 (98.36%)
+      Max:         1.0000 (100.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.007731
+
+    Bust percentage (Opponent):
+      Mean:        0.9865 (98.65%)
+      Max:         1.0000 (100.00%)
+      Min:         0.1000 (10.00%)
+      Variance:  0.004568
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.16
+        Max:          10.00
+        Min:           0.00
+        Variance:      0.77
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         59.23
+      Max:         134.00
+      Min:          25.00
+      Variance:    280.34
+
+    Average rolls per round:
+      Mean:          5.92
+      Max:          13.40
+      Min:           2.50
+      Variance:      2.80
+
+  Opponent: Sesquagreedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        758.41
+      Max:       22952.00
+      Min:           0.00
+      Variance: 8132134.53
+
+    Points per round (average):
+      Mean:         75.84
+      Max:        2295.20
+      Min:           0.00
+      Variance:  81321.35
+
+    Bust percentage (PPO):
+      Mean:        0.9880 (98.80%)
+      Max:         1.0000 (100.00%)
+      Min:         0.1000 (10.00%)
+      Variance:  0.003876
+
+    Bust percentage (Opponent):
+      Mean:        0.9932 (99.32%)
+      Max:         1.0000 (100.00%)
+      Min:         0.7000 (70.00%)
+      Variance:  0.000734
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.12
+        Max:           9.00
+        Min:           0.00
+        Variance:      0.39
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         59.88
+      Max:         124.00
+      Min:          23.00
+      Variance:    272.49
+
+    Average rolls per round:
+      Mean:          5.99
+      Max:          12.40
+      Min:           2.30
+      Variance:      2.72
+
+  Opponent: Troll
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        836.70
+      Max:       13482.00
+      Min:           0.00
+      Variance: 7932158.90
+
+    Points per round (average):
+      Mean:         83.67
+      Max:        1348.20
+      Min:           0.00
+      Variance:  79321.59
+
+    Bust percentage (PPO):
+      Mean:        0.9542 (95.42%)
+      Max:         1.0000 (100.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.030522
+
+    Bust percentage (Opponent):
+      Mean:        1.0000 (100.00%)
+      Max:         1.0000 (100.00%)
+      Min:         1.0000 (100.00%)
+      Variance:  0.000000
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.46
+        Max:          10.00
+        Min:           0.00
+        Variance:      3.05
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         60.47
+      Max:         139.00
+      Min:          22.00
+      Variance:    279.15
+
+    Average rolls per round:
+      Mean:          6.05
+      Max:          13.90
+      Min:           2.20
+      Variance:      2.79
+
+
+====================================================================================================
+MODEL: RL_SPARSE_BETTER_MULTI
+====================================================================================================
+
+  Opponent: 100 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        710.93
+      Max:       13726.00
+      Min:           0.00
+      Variance: 5928683.10
+
+    Points per round (average):
+      Mean:         71.09
+      Max:        1372.60
+      Min:           0.00
+      Variance:  59286.83
+
+    Bust percentage (PPO):
+      Mean:        0.9909 (99.09%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.000987
+
+    Bust percentage (Opponent):
+      Mean:        0.5181 (51.81%)
+      Max:         1.0000 (100.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.024842
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      After opponent:
+        Mean:          0.09
+        Max:           2.00
+        Min:           0.00
+        Variance:      0.10
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         58.79
+      Max:         127.00
+      Min:          23.00
+      Variance:    275.22
+
+    Average rolls per round:
+      Mean:          5.88
+      Max:          12.70
+      Min:           2.30
+      Variance:      2.75
+
+  Opponent: 180 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        744.99
+      Max:       13192.00
+      Min:           0.00
+      Variance: 6128567.14
+
+    Points per round (average):
+      Mean:         74.50
+      Max:        1319.20
+      Min:           0.00
+      Variance:  61285.67
+
+    Bust percentage (PPO):
+      Mean:        0.9899 (98.99%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.001168
+
+    Bust percentage (Opponent):
+      Mean:        0.6936 (69.36%)
+      Max:         1.0000 (100.00%)
+      Min:         0.2000 (20.00%)
+      Variance:  0.021039
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      After opponent:
+        Mean:          0.10
+        Max:           2.00
+        Min:           0.00
+        Variance:      0.12
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         59.70
+      Max:         127.00
+      Min:          20.00
+      Variance:    282.17
+
+    Average rolls per round:
+      Mean:          5.97
+      Max:          12.70
+      Min:           2.00
+      Variance:      2.82
+
+  Opponent: Greedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        709.44
+      Max:       22040.00
+      Min:           0.00
+      Variance: 9659247.84
+
+    Points per round (average):
+      Mean:         70.94
+      Max:        2204.00
+      Min:           0.00
+      Variance:  96592.48
+
+    Bust percentage (PPO):
+      Mean:        0.9907 (99.07%)
+      Max:         1.0000 (100.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.003804
+
+    Bust percentage (Opponent):
+      Mean:        0.9923 (99.23%)
+      Max:         1.0000 (100.00%)
+      Min:         0.2000 (20.00%)
+      Variance:  0.002971
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.09
+        Max:          10.00
+        Min:           0.00
+        Variance:      0.38
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         60.33
+      Max:         123.00
+      Min:          22.00
+      Variance:    284.06
+
+    Average rolls per round:
+      Mean:          6.03
+      Max:          12.30
+      Min:           2.20
+      Variance:      2.84
+
+  Opponent: Sesquagreedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        759.68
+      Max:       24135.00
+      Min:           0.00
+      Variance: 11202091.93
+
+    Points per round (average):
+      Mean:         75.97
+      Max:        2413.50
+      Min:           0.00
+      Variance: 112020.92
+
+    Bust percentage (PPO):
+      Mean:        0.9893 (98.93%)
+      Max:         1.0000 (100.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.004336
+
+    Bust percentage (Opponent):
+      Mean:        0.9915 (99.15%)
+      Max:         1.0000 (100.00%)
+      Min:         0.1000 (10.00%)
+      Variance:  0.003018
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.11
+        Max:          10.00
+        Min:           0.00
+        Variance:      0.43
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         59.02
+      Max:         137.00
+      Min:          22.00
+      Variance:    308.70
+
+    Average rolls per round:
+      Mean:          5.90
+      Max:          13.70
+      Min:           2.20
+      Variance:      3.09
+
+  Opponent: Troll
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        776.57
+      Max:       28394.00
+      Min:           0.00
+      Variance: 11588352.52
+
+    Points per round (average):
+      Mean:         77.66
+      Max:        2839.40
+      Min:           0.00
+      Variance: 115883.53
+
+    Bust percentage (PPO):
+      Mean:        0.9944 (99.44%)
+      Max:         1.0000 (100.00%)
+      Min:         0.7000 (70.00%)
+      Variance:  0.000609
+
+    Bust percentage (Opponent):
+      Mean:        1.0000 (100.00%)
+      Max:         1.0000 (100.00%)
+      Min:         1.0000 (100.00%)
+      Variance:  0.000000
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.06
+        Max:           3.00
+        Min:           0.00
+        Variance:      0.06
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         59.80
+      Max:         130.00
+      Min:          20.00
+      Variance:    308.92
+
+    Average rolls per round:
+      Mean:          5.98
+      Max:          13.00
+      Min:           2.00
+      Variance:      3.09
+
+
+====================================================================================================
+MODEL: RL_ROUND_TROLL
+====================================================================================================
+
+  Opponent: 100 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        684.21
+      Max:        1920.00
+      Min:           0.00
+      Variance:  96095.22
+
+    Points per round (average):
+      Mean:         68.42
+      Max:         192.00
+      Min:           0.00
+      Variance:    960.95
+
+    Bust percentage (PPO):
+      Mean:        0.6091 (60.91%)
+      Max:         1.0000 (100.00%)
+      Min:         0.1000 (10.00%)
+      Variance:  0.023647
+
+    Bust percentage (Opponent):
+      Mean:        0.5190 (51.90%)
+      Max:         1.0000 (100.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.026539
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      After opponent:
+        Mean:          3.91
+        Max:           9.00
+        Min:           0.00
+        Variance:      2.36
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         36.18
+      Max:          78.00
+      Min:          16.00
+      Variance:     62.81
+
+    Average rolls per round:
+      Mean:          3.62
+      Max:           7.80
+      Min:           1.60
+      Variance:      0.63
+
+  Opponent: 180 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        724.81
+      Max:        2348.00
+      Min:           0.00
+      Variance: 187386.31
+
+    Points per round (average):
+      Mean:         72.48
+      Max:         234.80
+      Min:           0.00
+      Variance:   1873.86
+
+    Bust percentage (PPO):
+      Mean:        0.7448 (74.48%)
+      Max:         1.0000 (100.00%)
+      Min:         0.3000 (30.00%)
+      Variance:  0.019853
+
+    Bust percentage (Opponent):
+      Mean:        0.6992 (69.92%)
+      Max:         1.0000 (100.00%)
+      Min:         0.3000 (30.00%)
+      Variance:  0.020739
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      After opponent:
+        Mean:          2.22
+        Max:           7.00
+        Min:           0.00
+        Variance:      1.98
+      With opponent:
+        Mean:          0.33
+        Max:           3.00
+        Min:           0.00
+        Variance:      0.28
+
+    Total rolls per game:
+      Mean:         43.78
+      Max:          80.00
+      Min:          17.00
+      Variance:     97.10
+
+    Average rolls per round:
+      Mean:          4.38
+      Max:           8.00
+      Min:           1.70
+      Variance:      0.97
+
+  Opponent: Greedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        744.10
+      Max:        3452.00
+      Min:           0.00
+      Variance: 294146.97
+
+    Points per round (average):
+      Mean:         74.41
+      Max:         345.20
+      Min:           0.00
+      Variance:   2941.47
+
+    Bust percentage (PPO):
+      Mean:        0.8287 (82.87%)
+      Max:         1.0000 (100.00%)
+      Min:         0.4000 (40.00%)
+      Variance:  0.012426
+
+    Bust percentage (Opponent):
+      Mean:        0.8574 (85.74%)
+      Max:         1.0000 (100.00%)
+      Min:         0.5000 (50.00%)
+      Variance:  0.010565
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          1.71
+        Max:           6.00
+        Min:           0.00
+        Variance:      1.24
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         51.25
+      Max:         101.00
+      Min:          19.00
+      Variance:    164.92
+
+    Average rolls per round:
+      Mean:          5.13
+      Max:          10.10
+      Min:           1.90
+      Variance:      1.65
+
+  Opponent: Sesquagreedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        769.36
+      Max:        4108.00
+      Min:           0.00
+      Variance: 292571.61
+
+    Points per round (average):
+      Mean:         76.94
+      Max:         410.80
+      Min:           0.00
+      Variance:   2925.72
+
+    Bust percentage (PPO):
+      Mean:        0.8224 (82.24%)
+      Max:         1.0000 (100.00%)
+      Min:         0.3000 (30.00%)
+      Variance:  0.012598
+
+    Bust percentage (Opponent):
+      Mean:        0.8639 (86.39%)
+      Max:         1.0000 (100.00%)
+      Min:         0.3000 (30.00%)
+      Variance:  0.011007
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          1.78
+        Max:           7.00
+        Min:           0.00
+        Variance:      1.26
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         52.10
+      Max:          98.00
+      Min:          20.00
+      Variance:    157.73
+
+    Average rolls per round:
+      Mean:          5.21
+      Max:           9.80
+      Min:           2.00
+      Variance:      1.58
+
+  Opponent: Troll
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        747.34
+      Max:        2286.00
+      Min:           0.00
+      Variance: 238543.56
+
+    Points per round (average):
+      Mean:         74.73
+      Max:         228.60
+      Min:           0.00
+      Variance:   2385.44
+
+    Bust percentage (PPO):
+      Mean:        0.8076 (80.76%)
+      Max:         1.0000 (100.00%)
+      Min:         0.4000 (40.00%)
+      Variance:  0.015722
+
+    Bust percentage (Opponent):
+      Mean:        1.0000 (100.00%)
+      Max:         1.0000 (100.00%)
+      Min:         1.0000 (100.00%)
+      Variance:  0.000000
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          1.92
+        Max:           6.00
+        Min:           0.00
+        Variance:      1.57
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         60.12
+      Max:         116.00
+      Min:          19.00
+      Variance:    285.32
+
+    Average rolls per round:
+      Mean:          6.01
+      Max:          11.60
+      Min:           1.90
+      Variance:      2.85
+
+
+====================================================================================================
+MODEL: RL_SPARSE_TROLL
+====================================================================================================
+
+  Opponent: 100 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        755.13
+      Max:       10050.00
+      Min:           0.00
+      Variance: 1423636.11
+
+    Points per round (average):
+      Mean:         75.51
+      Max:        1005.00
+      Min:           0.00
+      Variance:  14236.36
+
+    Bust percentage (PPO):
+      Mean:        0.9573 (95.73%)
+      Max:         1.0000 (100.00%)
+      Min:         0.6000 (60.00%)
+      Variance:  0.004067
+
+    Bust percentage (Opponent):
+      Mean:        0.5229 (52.29%)
+      Max:         1.0000 (100.00%)
+      Min:         0.1000 (10.00%)
+      Variance:  0.023686
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      After opponent:
+        Mean:          0.43
+        Max:           4.00
+        Min:           0.00
+        Variance:      0.41
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         56.90
+      Max:         114.00
+      Min:          19.00
+      Variance:    213.52
+
+    Average rolls per round:
+      Mean:          5.69
+      Max:          11.40
+      Min:           1.90
+      Variance:      2.14
+
+  Opponent: 180 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        772.78
+      Max:        8335.00
+      Min:           0.00
+      Variance: 1343928.90
+
+    Points per round (average):
+      Mean:         77.28
+      Max:         833.50
+      Min:           0.00
+      Variance:  13439.29
+
+    Bust percentage (PPO):
+      Mean:        0.9544 (95.44%)
+      Max:         1.0000 (100.00%)
+      Min:         0.6000 (60.00%)
+      Variance:  0.004401
+
+    Bust percentage (Opponent):
+      Mean:        0.6996 (69.96%)
+      Max:         1.0000 (100.00%)
+      Min:         0.2000 (20.00%)
+      Variance:  0.022520
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      After opponent:
+        Mean:          0.46
+        Max:           4.00
+        Min:           0.00
+        Variance:      0.44
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         56.40
+      Max:         136.00
+      Min:          16.00
+      Variance:    242.63
+
+    Average rolls per round:
+      Mean:          5.64
+      Max:          13.60
+      Min:           1.60
+      Variance:      2.43
+
+  Opponent: Greedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        855.35
+      Max:       11266.00
+      Min:           0.00
+      Variance: 4358952.03
+
+    Points per round (average):
+      Mean:         85.53
+      Max:        1126.60
+      Min:           0.00
+      Variance:  43589.52
+
+    Bust percentage (PPO):
+      Mean:        0.9826 (98.26%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.001757
+
+    Bust percentage (Opponent):
+      Mean:        0.9855 (98.55%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.001420
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.17
+        Max:           2.00
+        Min:           0.00
+        Variance:      0.18
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         59.19
+      Max:         143.00
+      Min:          21.00
+      Variance:    246.19
+
+    Average rolls per round:
+      Mean:          5.92
+      Max:          14.30
+      Min:           2.10
+      Variance:      2.46
+
+  Opponent: Sesquagreedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        786.20
+      Max:       12866.00
+      Min:           0.00
+      Variance: 3771471.30
+
+    Points per round (average):
+      Mean:         78.62
+      Max:        1286.60
+      Min:           0.00
+      Variance:  37714.71
+
+    Bust percentage (PPO):
+      Mean:        0.9838 (98.38%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.001538
+
+    Bust percentage (Opponent):
+      Mean:        0.9864 (98.64%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.001335
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.16
+        Max:           2.00
+        Min:           0.00
+        Variance:      0.15
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         59.70
+      Max:         122.00
+      Min:          20.00
+      Variance:    273.25
+
+    Average rolls per round:
+      Mean:          5.97
+      Max:          12.20
+      Min:           2.00
+      Variance:      2.73
+
+  Opponent: Troll
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        781.92
+      Max:       12986.00
+      Min:           0.00
+      Variance: 4015250.69
+
+    Points per round (average):
+      Mean:         78.19
+      Max:        1298.60
+      Min:           0.00
+      Variance:  40152.51
+
+    Bust percentage (PPO):
+      Mean:        0.9842 (98.42%)
+      Max:         1.0000 (100.00%)
+      Min:         0.8000 (80.00%)
+      Variance:  0.001550
+
+    Bust percentage (Opponent):
+      Mean:        1.0000 (100.00%)
+      Max:         1.0000 (100.00%)
+      Min:         1.0000 (100.00%)
+      Variance:  0.000000
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.16
+        Max:           2.00
+        Min:           0.00
+        Variance:      0.16
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         60.35
+      Max:         123.00
+      Min:          21.00
+      Variance:    304.07
+
+    Average rolls per round:
+      Mean:          6.04
+      Max:          12.30
+      Min:           2.10
+      Variance:      3.04
+
+
+====================================================================================================
+MODEL: RL_SPARSE_BETTER_TROLL
+====================================================================================================
+
+  Opponent: 100 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        745.09
+      Max:        3372.00
+      Min:           0.00
+      Variance: 384744.73
+
+    Points per round (average):
+      Mean:         74.51
+      Max:         337.20
+      Min:           0.00
+      Variance:   3847.45
+
+    Bust percentage (PPO):
+      Mean:        0.8609 (86.09%)
+      Max:         1.0000 (100.00%)
+      Min:         0.5000 (50.00%)
+      Variance:  0.010721
+
+    Bust percentage (Opponent):
+      Mean:        0.5164 (51.64%)
+      Max:         1.0000 (100.00%)
+      Min:         0.0000 (0.00%)
+      Variance:  0.025271
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      After opponent:
+        Mean:          1.39
+        Max:           5.00
+        Min:           0.00
+        Variance:      1.07
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         51.20
+      Max:          98.00
+      Min:          19.00
+      Variance:    150.35
+
+    Average rolls per round:
+      Mean:          5.12
+      Max:           9.80
+      Min:           1.90
+      Variance:      1.50
+
+  Opponent: 180 Threshold
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        784.25
+      Max:        3572.00
+      Min:           0.00
+      Variance: 396130.53
+
+    Points per round (average):
+      Mean:         78.43
+      Max:         357.20
+      Min:           0.00
+      Variance:   3961.31
+
+    Bust percentage (PPO):
+      Mean:        0.8597 (85.97%)
+      Max:         1.0000 (100.00%)
+      Min:         0.5000 (50.00%)
+      Variance:  0.010026
+
+    Bust percentage (Opponent):
+      Mean:        0.6897 (68.97%)
+      Max:         1.0000 (100.00%)
+      Min:         0.2000 (20.00%)
+      Variance:  0.019444
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      After opponent:
+        Mean:          1.40
+        Max:           5.00
+        Min:           0.00
+        Variance:      1.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         51.66
+      Max:         102.00
+      Min:          22.00
+      Variance:    157.38
+
+    Average rolls per round:
+      Mean:          5.17
+      Max:          10.20
+      Min:           2.20
+      Variance:      1.57
+
+  Opponent: Greedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        772.39
+      Max:        4470.00
+      Min:           0.00
+      Variance: 580037.41
+
+    Points per round (average):
+      Mean:         77.24
+      Max:         447.00
+      Min:           0.00
+      Variance:   5800.37
+
+    Bust percentage (PPO):
+      Mean:        0.9074 (90.74%)
+      Max:         1.0000 (100.00%)
+      Min:         0.6000 (60.00%)
+      Variance:  0.006825
+
+    Bust percentage (Opponent):
+      Mean:        0.9216 (92.16%)
+      Max:         1.0000 (100.00%)
+      Min:         0.6000 (60.00%)
+      Variance:  0.006073
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.93
+        Max:           4.00
+        Min:           0.00
+        Variance:      0.68
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         55.43
+      Max:         109.00
+      Min:          18.00
+      Variance:    181.71
+
+    Average rolls per round:
+      Mean:          5.54
+      Max:          10.90
+      Min:           1.80
+      Variance:      1.82
+
+  Opponent: Sesquagreedy
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        766.20
+      Max:        7560.00
+      Min:           0.00
+      Variance: 685875.50
+
+    Points per round (average):
+      Mean:         76.62
+      Max:         756.00
+      Min:           0.00
+      Variance:   6858.75
+
+    Bust percentage (PPO):
+      Mean:        0.9098 (90.98%)
+      Max:         1.0000 (100.00%)
+      Min:         0.5000 (50.00%)
+      Variance:  0.007724
+
+    Bust percentage (Opponent):
+      Mean:        0.9269 (92.69%)
+      Max:         1.0000 (100.00%)
+      Min:         0.5000 (50.00%)
+      Variance:  0.006666
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.90
+        Max:           5.00
+        Min:           0.00
+        Variance:      0.77
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         55.28
+      Max:         132.00
+      Min:          22.00
+      Variance:    208.24
+
+    Average rolls per round:
+      Mean:          5.53
+      Max:          13.20
+      Min:           2.20
+      Variance:      2.08
+
+  Opponent: Troll
+  ------------------------------------------------------------------------------------------------
+    Score per game:
+      Mean:        787.73
+      Max:        4612.00
+      Min:           0.00
+      Variance: 617049.46
+
+    Points per round (average):
+      Mean:         78.77
+      Max:         461.20
+      Min:           0.00
+      Variance:   6170.49
+
+    Bust percentage (PPO):
+      Mean:        0.9020 (90.20%)
+      Max:         1.0000 (100.00%)
+      Min:         0.5000 (50.00%)
+      Variance:  0.008816
+
+    Bust percentage (Opponent):
+      Mean:        1.0000 (100.00%)
+      Max:         1.0000 (100.00%)
+      Min:         1.0000 (100.00%)
+      Variance:  0.000000
+
+    Banking timing (counts per game):
+      Before opponent:
+        Mean:          0.98
+        Max:           5.00
+        Min:           0.00
+        Variance:      0.88
+      After opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+      With opponent:
+        Mean:          0.00
+        Max:           0.00
+        Min:           0.00
+        Variance:      0.00
+
+    Total rolls per game:
+      Mean:         60.37
+      Max:         159.00
+      Min:          19.00
+      Variance:    317.63
+
+    Average rolls per round:
+      Mean:          6.04
+      Max:          15.90
+      Min:           1.90
+      Variance:      3.18

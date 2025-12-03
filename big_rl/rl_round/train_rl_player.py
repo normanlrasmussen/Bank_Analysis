@@ -28,20 +28,25 @@ except ImportError:
 
 try:
     from bank_gym import BankEnv
-    from players import ThersholdPlayer, GreedyPlayer, GreedyPlayerK, SesquaGreedyPlayer, ProbabilisticPlayer
+    from players import ThersholdPlayer, GreedyPlayer, GreedyPlayerK, SesquaGreedyPlayer, ProbabilisticPlayer, TrollPlayer
 except ModuleNotFoundError as e:
     if 'game_theory' in str(e):
         project_root_str = str(project_root)
         if project_root_str not in sys.path:
             sys.path.insert(0, project_root_str)
         from bank_gym import BankEnv
-        from players import ThersholdPlayer, GreedyPlayer, GreedyPlayerK, SesquaGreedyPlayer, ProbabilisticPlayer
+        from players import ThersholdPlayer, GreedyPlayer, GreedyPlayerK, SesquaGreedyPlayer, ProbabilisticPlayer, TrollPlayer
     else:
         raise
 
 ENV_ROUNDS = 10
 ENV_OPPONENTS = [
-    
+    ThersholdPlayer(threshold=100),
+    ThersholdPlayer(threshold=180),
+    GreedyPlayer(),
+    SesquaGreedyPlayer(),
+    ProbabilisticPlayer(probability=0.2),
+    TrollPlayer(),
 ]
 ENV_MAX_ROUND_LENGTH = 1000
 
@@ -67,12 +72,12 @@ TRACK_PROGRESS_INTERVAL = 1000
 PROGRESS_EVAL_EPISODES = 20
 
 SAVE_MODEL = True
-MODEL_SAVE_PATH = str(script_dir / "RL_data" / "rl_bank_model_ppo_solo.zip")
+MODEL_SAVE_PATH = str(script_dir / "RL_data" / "rl_bank_model_ppo_troll.zip")
 
 PLOT_FIGURE_SIZE = (14, 10)
 PLOT_DPI = 100
 SAVE_PLOT = True
-PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_ppo_solo.png")
+PLOT_SAVE_PATH = str(script_dir / "RL_data" / "rl_training_stats_ppo_troll.png")
 
 
 def evaluate_agent(env, model, n_episodes: int = 100) -> Tuple[float, float, List[int], List[float]]:
