@@ -119,6 +119,16 @@ class Bank:
             expected_value += np.array(bank.player_scores)
         return expected_value / num_simulations
 
+    @staticmethod
+    def get_expected_value_std(players: list[Player], rounds: int, num_simulations: int = 1000):
+        expected_value = np.zeros((num_simulations, len(players)))
+        for i in range(num_simulations):
+            fresh_players = [copy.deepcopy(player) for player in players]
+            bank = Bank(rounds, fresh_players)
+            bank.play_game()
+            expected_value[i, :] = np.array(bank.player_scores)
+        return np.mean(expected_value, axis=0), np.std(expected_value, axis=0)
+
     @staticmethod # TODO: Depreciate this method
     def estimate_expected_score(players: list[Player], rounds: int, num_simulations: int = 1000):
         expected_score = np.zeros(len(players))
