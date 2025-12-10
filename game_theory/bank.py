@@ -13,6 +13,9 @@ class Bank:
             player.set_player_id(i)
         self.results = None
         self.verbose = verbose
+        self.current_round = 1
+        self.player_scores = [0 for _ in range(len(self.players))]
+        self.player_score_history = [[] for _ in range(len(self.players))]
 
     def roll(self):
         # Roll two dice and return the result

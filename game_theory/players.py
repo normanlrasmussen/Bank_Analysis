@@ -22,6 +22,7 @@ class HumanPlayer(Player):
         super().__init__(name)
     
     def decide_action(self, state):
+        print(" ")
         print("Here is the current state:")
         print(f"Rounds remaining: {state['rounds_remaining']}")
         for i, player in enumerate(state["players_in"]):
