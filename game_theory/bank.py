@@ -33,6 +33,7 @@ class Bank:
                 "rounds_remaining": self.rounds - self.current_round,
                 "player_scores": self.player_scores.copy(),
                 "players_in": players_in.copy(),
+                "num_of_rolls": k,
             }
             
             # Collect all player decisions simultaneously (no look-ahead bias)

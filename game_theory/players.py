@@ -167,3 +167,17 @@ class TrollPlayer(Player):
     
     def decide_action(self, state):
         return "roll"
+
+class RollThresholdPlayer(Player):
+    """
+    Player that banks when the number of rolls is greater than or equal to the threshold.
+    """
+    def __init__(self, name: str = None, threshold: int = 0):
+        super().__init__(name)
+        self.threshold = threshold
+    
+    def decide_action(self, state):
+        if state["num_of_rolls"] >= self.threshold:
+            return "bank"
+        else:
+            return "roll"

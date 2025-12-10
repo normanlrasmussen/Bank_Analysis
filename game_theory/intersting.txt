@@ -1,0 +1,21 @@
+- anti_greedy_test.ipynb
+    Shows how close we can get to beating the greedy player
+
+- greedyk_comp
+    No point in rolling more
+    But there is interest in increasing the amount of rounds
+
+- sesqa_greedy_test
+    Shows how how this player can out perform the greedy player
+    (Only in lower thresholds)
+
+-test_prob_player
+    Shows the "low" effectiveness of the probabilistic player
+
+
+
+TO-DO:
+test the k-roll effectiveness
+
+
+# Things for paper
