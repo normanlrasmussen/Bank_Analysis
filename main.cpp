@@ -8,9 +8,9 @@
 #include <chrono>
 
 // Game constancts
-static const int NUM_ROUNDS = 5;
+static const int NUM_ROUNDS = 10;
 static const int MAX_DEFICIT = 600;
-static const int MAX_ROUND_SCORE = 300;
+static const int MAX_ROUND_SCORE = 500;
 static const int OPT_OUT_POINTS = 100;
 static const double WIN_WEIGHT = 0.75;
 
