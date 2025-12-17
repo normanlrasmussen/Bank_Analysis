@@ -153,7 +153,7 @@ class AntiGreedyPlayer(Player):
         if len(state["players_in"]) != 2:
             raise ValueError("AntiGreedyPlayer is only for 2p games")
 
-        if state["player_scores"][self.player_id] + state["current_score"] > state["player_scores"][1 - self.player_id]:
+        if state["player_scores"][self.player_id] + state["current_score"] > state["player_scores"][1 - self.player_id] and state["player_scores"][self.player_id] <= state["player_scores"][1 - self.player_id]:
             return "bank"
         else:
             return "roll"
